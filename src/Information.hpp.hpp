@@ -1,0 +1,15 @@
+//
+// Created by vincent on 14/04/17.
+//
+
+#ifndef CPP_PLAZZA_INFORMATION_HPP_HPP
+#define CPP_PLAZZA_INFORMATION_HPP_HPP
+
+enum Information
+{
+  PHONE_NUMBER,
+  EMAIL_ADDRESS,
+  IP_ADRESS
+};
+
+#endif //CPP_PLAZZA_INFORMATION_HPP_HPP
