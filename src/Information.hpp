@@ -9,7 +9,7 @@ enum Information
 {
   PHONE_NUMBER,
   EMAIL_ADDRESS,
-  IP_ADRESS
+  IP_ADDRESS
 };
 
 #endif //CPP_PLAZZA_INFORMATION_HPP_HPP

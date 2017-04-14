@@ -5,6 +5,11 @@
 #include "Plazza.hpp"
 #include "OrderParser.hpp"
 
+const std::map<std::string, Information>	Pza::Plazza::P_INFORMATION_LINKS = {
+	{"PHONE_NUMBER", PHONE_NUMBER},
+	{"EMAIL_ADDRESS", EMAIL_ADDRESS},
+	{"IP_ADDRESS", IP_ADDRESS},
+};
 
 Pza::Plazza::Plazza(int nbrOfThreadPerProcess) :
 	_nbrOfThreadPerProcess(nbrOfThreadPerProcess)
@@ -16,15 +21,25 @@ Pza::Plazza::Plazza(int nbrOfThreadPerProcess) :
 Pza::Plazza::~Plazza()
 { }
 
-bool 				Pza::Plazza::reception()
+bool 						Pza::Plazza::reception()
 {
-  std::string 			line;
-  Pza::OrderParser		parser;
+  std::string 					line;
+  Pza::OrderParser				parser;
+  std::vector<std::pair<std::string,
+	  Information>>				orders;
 
   while (std::getline(std::cin, line))
     {
-      parser.feed(line);
-      parser.parse();
+      if (!(line.empty()))
+	{
+	  parser.feed(line);
+	  parser.parse(orders);
+	  for (auto &it : orders)
+	    {
+	      std::cout << it.first << std::endl;
+	    }
+	  orders.clear();
+	}
     }
   return (true);
 }
