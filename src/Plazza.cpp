@@ -21,7 +21,7 @@ Pza::Plazza::Plazza(int nbrOfThreadPerProcess) :
 Pza::Plazza::~Plazza()
 { }
 
-bool 						Pza::Plazza::reception()
+void 						Pza::Plazza::reception() const
 {
   std::string 					line;
   Pza::OrderParser				parser;
@@ -34,12 +34,7 @@ bool 						Pza::Plazza::reception()
 	{
 	  parser.feed(line);
 	  parser.parse(orders);
-	  for (auto &it : orders)
-	    {
-	      std::cout << it.first << std::endl;
-	    }
 	  orders.clear();
 	}
     }
-  return (true);
 }

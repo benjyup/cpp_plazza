@@ -21,9 +21,13 @@ namespace Pza
     Plazza(int nbrOfThreadPerProcess);
     ~Plazza();
 
-    bool 						reception(void);
+    void 						reception(void) const;
 
    private:
+    Plazza &operator=(const Plazza &rhs);
+    bool operator==(const Plazza &rhs) const;
+    bool operator!=(const Plazza &rhs) const;
+
     int							_nbrOfThreadPerProcess;
   };
 }
