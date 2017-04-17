@@ -5,12 +5,13 @@
 // Login   <vincent@epitech.net>
 // 
 // Started on  Sun Apr 16 22:00:23 2017 vincent.mesquita@epitech.eu
-// Last update Mon Apr 17 03:47:45 2017 vincent.mesquita@epitech.eu
+// Last update Mon Apr 17 03:56:23 2017 vincent.mesquita@epitech.eu
 //
 
 #ifndef CLIENT_H_
 # define CLIENT_H_
 
+# include <array>
 # include <string>
 # include <cstring>
 # include <netdb.h>
@@ -25,15 +26,17 @@ namespace tcp
   {
   public:
 
+    static const std::array<std::string, 4>	HOST_ERRORS;
+
     Client(const std::string &hostname, uint16_t port);
     ~Client(void);
 
-    void			send(const std::string &msg) const;
-    std::string			getNotification(const size_t buffLength) const;
+    void					send(const std::string &msg) const;
+    std::string					getNotification(const size_t buffLength) const;
 
   private:
-    int				_socket;
-    struct sockaddr_in		_servAddr;
+    int						_socket;
+    struct sockaddr_in				_servAddr;
   };
 }
 

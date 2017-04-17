@@ -5,7 +5,7 @@
 // Login   <vincent@epitech.net>
 // 
 // Started on  Sun Apr 16 15:11:26 2017 vincent.mesquita@epitech.eu
-// Last update Sun Apr 16 22:10:47 2017 vincent.mesquita@epitech.eu
+// Last update Mon Apr 17 04:56:23 2017 vincent.mesquita@epitech.eu
 //
 
 #include "Server.hpp"
@@ -40,6 +40,7 @@ tcp::Server::Server(int port, int simulateConnectionAllowed) :
 tcp::Server::~Server(void)
 {
   close(this->_servSocket);
+  close(this->_clientSocket);
 }
 
 std::string				tcp::Server::recept(const size_t buffLength)

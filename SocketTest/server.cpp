@@ -5,7 +5,7 @@
 // Login   <vincent@epitech.net>
 // 
 // Started on  Sun Apr 16 15:18:53 2017 vincent.mesquita@epitech.eu
-// Last update Mon Apr 17 03:38:51 2017 vincent.mesquita@epitech.eu
+// Last update Mon Apr 17 04:12:31 2017 vincent.mesquita@epitech.eu
 //
 
 #include <iostream>
@@ -24,5 +24,6 @@ int		main(void)
   } catch (const std::exception &e) {
     std::cerr << e.what() << std::endl;
   }
+  //  sleep(3);
   return (0);
 }
