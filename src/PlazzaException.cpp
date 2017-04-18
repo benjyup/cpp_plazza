@@ -8,7 +8,7 @@ Pza::PlazzaException::PlazzaException(const std::string &str) throw() : _str(str
 { }
 
 Pza::PlazzaException::~PlazzaException() throw()
-{}
+{ }
 
 const char* Pza::PlazzaException::what() const throw()
 {

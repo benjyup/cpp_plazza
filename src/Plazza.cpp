@@ -33,7 +33,11 @@ void 						Pza::Plazza::reception() const
       if (!(line.empty()))
 	{
 	  parser.feed(line);
-	  parser.parse(orders);
+	  try {
+	      parser.parse(orders);
+	    } catch (const std::exception &e) {
+	      std::cerr << "Error: " << e.what() << std::endl;
+	    }
 	  orders.clear();
 	}
     }

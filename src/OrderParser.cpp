@@ -52,7 +52,7 @@ unsigned long		Pza::OrderParser::getFilename(std::string &str,
   unsigned long		i = _line.find(OP_ARGS_SEPARATORS, begin);
 
   if (i == std::string::npos)
-    throw Pza::PlazzaException("Invalid order: " + _line);
+    throw Pza::PlazzaException("Invalid order");
   str = _line.substr(begin, (i - begin));
   return (i + 1);
 }
