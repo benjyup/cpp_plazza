@@ -7,7 +7,21 @@
 
 void		test(Pza::ThreadPool *t)
 {
-  std::cout << "working" << std::endl;
+  while (42)
+    {
+      {
+	std::unique_lock<std::mutex> lock(t->_mutexQ);
+	while (!t->getStatus() && t->_Queue.empty())
+	    t->_cdtVar.wait(lock);
+	if (t->getStatus())
+	  break;
+//	auto i = _pool._Queue.front();
+	//pop from task queue
+	t->._Queue.pop_front();
+      }
+      //call function with the pair argument;
+      //my_func(pair);
+    }
 }
 
 Pza::ThreadPool::ThreadPool(unsigned int nb)
@@ -45,21 +59,4 @@ Pza::Worker::~Worker() {}
 
 void Pza::Worker::launch(void)
 {
-  while (42)
-    {
-      {
-	std::unique_lock<std::mutex> lock(_pool._mutexQ);
-	while (!_pool.getStatus() && _pool._Queue.empty())
-	  {
-	    _pool._cdtVar.wait(lock);
-	  }
-	if (_pool.getStatus())
-	  break;
-//	auto i = _pool._Queue.front();
-	//pop from task queue
-	_pool._Queue.pop_front();
-      }
-      //call function with the pair argument;
-      //my_func(pair);
-    }
 }
