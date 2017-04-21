@@ -28,7 +28,8 @@ namespace Pza
    private:
     int 			_nbrOfThread;
     pid_t 			_pid;
-    ThreadPool		_threadPool;
+    unsigned int		_id;
+    ThreadPool			_threadPool;
     Process			&operator=(const Process &);
   };
 }
