@@ -30,7 +30,7 @@ namespace Pza
     Plazza &operator=(const Plazza &rhs);
 
     int							_nbrOfThreadPerProcess;
-    std::vector<std::pair<Pza::Process, int>>			_processes;
+    std::vector<Pza::Process>			_processes;
 
     void						dump(std::vector<std::pair<std::vector<std::string>,
 	    Information>>orders) const;

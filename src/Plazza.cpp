@@ -18,27 +18,30 @@ Pza::Plazza::~Plazza()
 
 void 						Pza::Plazza::reception()
 {
-  std::string 					line;
-  Pza::OrderParser				parser;
+  std::string line;
+  Pza::OrderParser parser;
   std::vector<std::pair<std::vector<std::string>,
-	  Information>>				orders;
-    int                         nbTask;
+	  Information>> orders;
+//  int nbTask;
 
   while (std::getline(std::cin, line))
     {
       if (!(line.empty()))
 	{
-        nbTask = 0;
+//	  nbTask = 0;
 	  parser.feed(line);
-	  try {
+	  try
+	    {
 	      parser.parse(orders);
-	    } catch (const std::exception &e) {
+	    } catch (const std::exception &e)
+	    {
 	      std::cerr << "Error: " << e.what() << std::endl;
 	    }
 	  this->dump(orders);
-      for (const auto &i : orders) {
-          nbTask += i.first.size();
-      }
+/*
+	  for (const auto &i : orders)
+	    nbTask += i.first.size();
+*/
 	  for (const auto &it : orders)
 	    this->_processes.emplace_back(_nbrOfThreadPerProcess, it.first, it.second);
 	  orders.clear();
@@ -56,6 +59,7 @@ void Pza::Plazza::dump(std::vector<std::pair<std::vector<std::string>,
 	{
 	  std::cout << files << std::endl;
 	}
-      std::cout << "Information to get :" << Pza::OrderParser::INFORMATION_TO_STRING.at(order.second)<< std::endl << std::endl;
+      std::cout << "Information to get :" << Pza::OrderParser::INFORMATION_TO_STRING.at(order.second) << std::endl
+		<< std::endl;
     }
 }

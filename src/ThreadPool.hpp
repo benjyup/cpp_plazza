@@ -14,18 +14,20 @@
 
 namespace Pza {
 
-    class ThreadPool;
-    class Worker {
+  class ThreadPool;
+
+  class Worker {
     public:
         Worker(ThreadPool &tp);
         ~Worker();
-        void operator()();
+    void operator()(void);
     private:
      ThreadPool &_pool;
     };
+
     class ThreadPool {
     public:
-        ThreadPool(size_t);
+        ThreadPool(unsigned int);
         ~ThreadPool();
         void    addTask(std::string const &, Information &);
         bool    getStatus() const;
@@ -37,6 +39,6 @@ namespace Pza {
         std::vector<std::thread> _workers;
         bool                                             _stop;
     };
-};
+}
 
 #endif //CPP_PLAZZA_THREADPOOL_HPP

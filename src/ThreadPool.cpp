@@ -4,7 +4,7 @@
 
 #include "ThreadPool.hpp"
 
-Pza::ThreadPool::ThreadPool(size_t nb)
+Pza::ThreadPool::ThreadPool(unsigned int nb)
         :   _stop(false)
 {
     for(unsigned int i = 0; i < nb; ++i)
@@ -15,8 +15,7 @@ Pza::ThreadPool::~ThreadPool()
 {
     _stop = true;
     _cdtVar.notify_all();
-
-    for(auto i : _workers)
+    for(auto &i : _workers)
         i.join();
 }
 
@@ -26,34 +25,34 @@ bool Pza::ThreadPool::getStatus() const {
 
 void Pza::ThreadPool::addTask(std::string const & filename, Information &to_find) {
     {
-        std::unique_lock lock(_mutexQ);
+        std::unique_lock<std::mutex> lock(_mutexQ);
         _Queue.push_back(std::make_pair(filename, to_find));
     }
     _cdtVar.notify_one();
 }
 
+void Pza::Worker::operator()() {
+
+  while (42) {
+      {
+	std::unique_lock<std::mutex> lock(_pool._mutexQ);
+	while (!_pool.getStatus() && _pool._Queue.empty()) {
+	    _pool._cdtVar.wait(lock);
+	  }
+	if (_pool.getStatus())
+	  break ;
+	auto i = _pool._Queue.front();
+	//pop from task queue
+	_pool._Queue.pop_front();
+      }
+      //call function with the pair argument;
+      //my_func(pair);
+    }
+}
+
 Pza::Worker::Worker(ThreadPool &tp) : _pool(tp)  {
-    this->();
 }
 
 Pza::Worker::~Worker() {}
 
-void Pza::Worker::operator()() {
-
-    while (42) {
-        {
-            std::unique_lock lock(_pool._mutexQ);
-            while (!_pool.getStatus() && _pool._Queue.empty()) {
-                _pool._cdtVar.wait(lock);
-            }
-            if (_pool.getStatus())
-                break ;
-            std::pair i = _pool._Queue.front();
-            //pop from task queue
-            _pool._Queue.pop_front();
-        }
-        //call function with the pair argument;
-        //my_func(pair);
-    }
-}
 

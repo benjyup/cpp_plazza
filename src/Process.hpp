@@ -21,7 +21,7 @@ namespace Pza
   {
    public:
     Process(int _nbrOfThread, const std::vector<std::string> &filenames, Information information);
-      Process(int _nbrOfThread);
+    Process(int _nbrOfThread);
     Process(const Process &);
     ~Process(void);
 

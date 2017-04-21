@@ -6,7 +6,7 @@
 
 Pza::Process::Process(int nbrOfThread, const std::vector<std::string> &filenames, Information information) :
 	_nbrOfThread(nbrOfThread),
-	_pid(fork()), _threadPool(ThreadPool(_nbrOfThread))
+	_pid(fork()), _threadPool(_nbrOfThread)
 {
   if (_pid < 0)
     throw Pza::PlazzaException("Error on forking: " + std::string(strerror(errno)));
@@ -30,10 +30,11 @@ Pza::Process::Process(int nbrOfThread, const std::vector<std::string> &filenames
 }
 
 Pza::Process::Process(int nbrOfThread) : _nbrOfThread(nbrOfThread),
-_pid(fork()), _threadPool(ThreadPool(_nbrOfThread)) {
-    if (_pid < 0)
-        throw Pza::PlazzaException("Error on forking: " + std::string(strerror(errno)));
-    std::cout << "Process créé" << std::endl;
+					 _pid(fork()), _threadPool(_nbrOfThread)
+{
+  if (_pid < 0)
+    throw Pza::PlazzaException("Error on forking: " + std::string(strerror(errno)));
+  std::cout << "Process créé" << std::endl;
 }
 
 Pza::Process::Process(const Pza::Process &other) :
