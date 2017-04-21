@@ -9,7 +9,6 @@ void		test(Pza::ThreadPool *t)
 {
   while (42)
     {
-      {
 	std::unique_lock<std::mutex> lock(t->_mutexQ);
 	while (!t->getStatus() && t->_Queue.empty())
 	    t->_cdtVar.wait(lock);
@@ -17,8 +16,7 @@ void		test(Pza::ThreadPool *t)
 	  break;
 //	auto i = _pool._Queue.front();
 	//pop from task queue
-	t->._Queue.pop_front();
-      }
+	t->_Queue.pop_front();
       //call function with the pair argument;
       //my_func(pair);
     }
