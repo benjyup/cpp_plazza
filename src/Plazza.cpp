@@ -40,8 +40,7 @@ void 						Pza::Plazza::reception()
           nbTask += i.first.size();
       }
 	  for (const auto &it : orders)
-	    this->_processes.push_back(Process(_nbrOfThreadPerProcess, it.first, it.second));
-//	    this->_processes.emplace_back(_nbrOfThreadPerProcess, it.first, it.second);
+	    this->_processes.emplace_back(_nbrOfThreadPerProcess, it.first, it.second);
 	  orders.clear();
 	}
     }
