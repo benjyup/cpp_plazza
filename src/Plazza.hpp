@@ -3,13 +3,15 @@
 //
 
 #ifndef CPP_PLAZZA_PLAZZA_HPP
-#define CPP_PLAZZA_PLAZZA_HPP
+# define CPP_PLAZZA_PLAZZA_HPP
 
-#include <iostream>
-#include <sstream>
-#include <regex>
-#include "PlazzaException.hpp"
-#include "Information.hpp"
+# include <iostream>
+# include <sstream>
+# include <map>
+# include <vector>
+# include "PlazzaException.hpp"
+# include "Information.hpp"
+# include "Process.hpp"
 
 namespace Pza
 {
@@ -21,14 +23,17 @@ namespace Pza
     Plazza(int nbrOfThreadPerProcess);
     ~Plazza();
 
-    void 						reception(void) const;
+    void 						reception(void);
 
    private:
+    Plazza(const Plazza &ths);
     Plazza &operator=(const Plazza &rhs);
-    bool operator==(const Plazza &rhs) const;
-    bool operator!=(const Plazza &rhs) const;
 
     int							_nbrOfThreadPerProcess;
+    std::vector<Pza::Process>				_processes;
+
+    void						dump(std::vector<std::pair<std::vector<std::string>,
+	    Information>>orders) const;
   };
 }
 

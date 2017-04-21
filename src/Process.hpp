@@ -5,21 +5,29 @@
 #ifndef CPP_PLAZZA_PROCESS_HPP
 #define CPP_PLAZZA_PROCESS_HPP
 
-#include <unistd.h>
+# include <unistd.h>
+# include <cstring>
+# include <iostream>
+# include <vector>
+# include <sys/types.h>
+# include <sys/wait.h>
+# include "PlazzaException.hpp"
+# include "Information.hpp"
 
 namespace Pza
 {
   class Process
   {
    public:
-    Process(int _nbrOfThread);
+    Process(int _nbrOfThread, const std::vector<std::string> &filenames, Information information);
+    Process(const Process &);
     ~Process(void);
 
    private:
     int 			_nbrOfThread;
-    //ThreadPool			threadPool;
+    pid_t 			_pid;
+    //ThreadPool		threadPool;
 
-    Process(const Process &);
     Process			&operator=(const Process &);
   };
 }

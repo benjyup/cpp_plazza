@@ -6,7 +6,7 @@ RM		=	rm -rf
 
 SRC		=	./src
 
-CPPFLAGS	+=	-std=c++14 -W -Wall -Werror -Wextra
+CPPFLAGS	+=	-std=c++14 -W -Wall -Werror -Wextra -g3
 
 LDFLAGS		=
 
@@ -14,6 +14,7 @@ SRCS		=	$(SRC)/main.cpp 		\
 			$(SRC)/Plazza.cpp 		\
 			$(SRC)/PlazzaException.cpp	\
 			$(SRC)/OrderParser.cpp		\
+			$(SRC)/Process.cpp		\
 
 OBJS		=	$(SRCS:.cpp=.o)
 

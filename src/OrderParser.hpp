@@ -5,10 +5,12 @@
 #ifndef CPP_PLAZZA_ORDERPARSER_HPP
 #define CPP_PLAZZA_ORDERPARSER_HPP
 
-#include <string>
-#include <vector>
-#include <iostream>
-#include "Information.hpp"
+# include <string>
+# include <vector>
+# include <iostream>
+# include <sstream>
+# include <map>
+# include "Information.hpp"
 
 namespace Pza
 {
@@ -16,28 +18,24 @@ namespace Pza
   {
    public:
 
-    static const char				OP_COMMANDS_SEPARATORS;
-    static const char				OP_ARGS_SEPARATORS;
+    static const std::map<std::string, Information>	STRING_TO_INFORMATION;
+    static const std::map<Information, std::string>	INFORMATION_TO_STRING;
+    static const char					COMMANDS_SEPARATORS;
+    static const char					ARGS_SEPARATORS;
 
     OrderParser(void);
     ~OrderParser(void);
 
-    void					feed(const std::string &);
-    void					parse(std::vector<std::pair<std::string, Information>> &);
-
+    void						feed(const std::string &);
+    void						parse(std::vector<std::pair<std::vector<std::string>,
+	    Information>> &);
 
    private:
     OrderParser(const OrderParser &);
-    OrderParser					&operator=(const OrderParser &);
+    OrderParser						&operator=(const OrderParser &);
 
-    std::string 				_line;
-    std::vector<unsigned long>			_semicolonsPos;
-
-    unsigned long				getFilename(std::string &str,
-							     unsigned long begin) const;
-    unsigned long				getInformation(std::string &str,
-								unsigned long begin) const;
-    void					epureLine(const std::string &line);
+    std::string 					_line;
+    std::vector<std::string>				_orders;
   };
 }
 
