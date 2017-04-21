@@ -29,6 +29,13 @@ Pza::Process::Process(int nbrOfThread, const std::vector<std::string> &filenames
 
 }
 
+Pza::Process::Process(int nbrOfThread) : _nbrOfThread(nbrOfThread),
+_pid(fork()), _threadPool(ThreadPool(_nbrOfThread)) {
+    if (_pid < 0)
+        throw Pza::PlazzaException("Error on forking: " + std::string(strerror(errno)));
+    std::cout << "Process créé" << std::endl;
+}
+
 Pza::Process::Process(const Pza::Process &other) :
 	_nbrOfThread(_nbrOfThread),
 	_pid(other._pid), _threadPool(_nbrOfThread)
