@@ -5,7 +5,7 @@
 // Login   <vincent@epitech.net>
 // 
 // Started on  Sun Apr 16 15:11:26 2017 vincent.mesquita@epitech.eu
-// Last update Mon Apr 17 04:56:23 2017 vincent.mesquita@epitech.eu
+// Last update Fri Apr 21 12:12:02 2017 vincent.mesquita@epitech.eu
 //
 
 #include "Server.hpp"
@@ -28,6 +28,9 @@ tcp::Server::Server(int port, int simulateConnectionAllowed) :
   this->_servAddr.sin_addr.s_addr = INADDR_ANY;
   this->_servAddr.sin_port = htons(this->_port);
 
+
+  int on = 1;
+  setsockopt (this->_servSocket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof (on));
   if (bind(this->_servSocket, reinterpret_cast<struct sockaddr *>(&this->_servAddr),
 	   sizeof(this->_servAddr)) < 0) {
     throw tcp::ServerException("Error on bindig: " + std::string(strerror(errno)));
