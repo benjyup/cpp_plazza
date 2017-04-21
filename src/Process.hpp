@@ -30,6 +30,8 @@ namespace Pza
     pid_t 			_pid;
     unsigned int		_id;
     ThreadPool			_threadPool;
+    std::vector<std::string>	_filenames;
+
     Process			&operator=(const Process &);
   };
 }

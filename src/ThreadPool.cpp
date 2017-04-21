@@ -72,9 +72,9 @@ void Pza::Worker::launch(void)
 
 std::pair<std::string, Information> &Pza::ThreadPool::getTask(void)
 {
-  std::pair<std::string, Information> &couple = (this->_Queue.back());
+  std::pair<std::string, Information> &couple = (this->_Queue.front());
 
-  this->_Queue.pop_back();
+  this->_Queue.pop_front();
   return (couple);
 }
 

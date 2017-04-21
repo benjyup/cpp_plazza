@@ -7,7 +7,8 @@
 Pza::Process::Process(int nbrOfThread, const std::vector<std::string> &filenames, Information information) :
 	_nbrOfThread(nbrOfThread),
 	_pid(fork()),
-	_threadPool(_nbrOfThread)
+	_threadPool(_nbrOfThread),
+	_filenames(filenames)
 {
   (void)filenames;
   (void)information;
@@ -18,19 +19,13 @@ Pza::Process::Process(int nbrOfThread, const std::vector<std::string> &filenames
     {
       while (true)
 	{
-	  for (const auto &filename : filenames)
+	  for (const auto &filename : this->_filenames)
 	    {
+	      std::cout << filename << std::endl;
 	      this->_threadPool.addTask(filename, information);
 	    }
+	  this->_filenames.clear();
 	}
-    }
-  else
-    {
-      /*
-	wait(NULL);
-	std::cout << "Je suis le père" << std::endl;
-	sleep(5);
-      */
     }
 }
 
