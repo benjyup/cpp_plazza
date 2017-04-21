@@ -32,7 +32,9 @@ void Pza::ThreadPool::addTask(std::string const & filename, Information &to_find
     _cdtVar.notify_one();
 }
 
-Pza::Worker::Worker(ThreadPool &tp) : _pool(tp)  { }
+Pza::Worker::Worker(ThreadPool &tp) : _pool(tp)  {
+    this->();
+}
 
 Pza::Worker::~Worker() {}
 

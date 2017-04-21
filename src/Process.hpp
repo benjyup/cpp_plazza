@@ -1,5 +1,5 @@
 //
-// Created by vincent on 18/04/17.
+// Created by vincent on 18/04/17.T
 //
 
 #ifndef CPP_PLAZZA_PROCESS_HPP
@@ -13,6 +13,7 @@
 # include <sys/wait.h>
 # include "PlazzaException.hpp"
 # include "Information.hpp"
+# include "ThreadPool.hpp"
 
 namespace Pza
 {
@@ -26,8 +27,7 @@ namespace Pza
    private:
     int 			_nbrOfThread;
     pid_t 			_pid;
-    //ThreadPool		threadPool;
-
+    ThreadPool		_threadPool;
     Process			&operator=(const Process &);
   };
 }
