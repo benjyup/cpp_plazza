@@ -18,12 +18,10 @@ Pza::Process::Process(int nbrOfThread, const std::vector<std::string> &filenames
     {
       while (true)
 	{
-	  std::cout << getpid() << std::endl;
-	  std::cout << "I am working ..." << std::endl;
-	  sleep(5);
-	  std::cout << "Done ..." << std::endl;
-	  //kill(getpid(), );
-	  //std::exit(0);
+	  for (const auto &filename : filenames)
+	    {
+	      this->_threadPool.addTask(filename, information);
+	    }
 	}
     }
   else

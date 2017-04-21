@@ -34,12 +34,16 @@ namespace Pza
   {
    public:
     ThreadPool(unsigned int);
-
     ~ThreadPool();
 
     void addTask(std::string const &, Information &);
-
     bool getStatus() const;
+
+    std::pair<std::string, Information>		&getTask(void);
+    std::mutex					&getMutex(void);
+
+    bool 					empty(void) const;
+    void					wait(std::unique_lock<std::mutex> &lock);
 
     std::deque<std::pair<std::string, Information>> _Queue;
     std::condition_variable _cdtVar;
