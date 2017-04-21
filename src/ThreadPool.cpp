@@ -2,14 +2,20 @@
 // Created by florian on 4/21/17.
 //
 
+#include <iostream>
 #include "ThreadPool.hpp"
+
+void		test(Pza::ThreadPool *t)
+{
+  std::cout << "working" << std::endl;
+}
 
 Pza::ThreadPool::ThreadPool(unsigned int nb)
         :   _stop(false)
 {
     Worker		work(*this);
     for(unsigned int i = 0; i < nb; ++i)
-        _workers.push_back(std::thread(work.launch, this));
+        _workers.emplace_back(test, this);
 }
 
 Pza::ThreadPool::~ThreadPool()
