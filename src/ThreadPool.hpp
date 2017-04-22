@@ -8,6 +8,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <vector>
+#include <list>
 #include <deque>
 #include <thread>
 #include "Information.hpp"
@@ -24,8 +25,6 @@ namespace Pza
 
     ~Worker();
 
-    void launch(void);
-
    private:
     ThreadPool &_pool;
   };
@@ -36,8 +35,11 @@ namespace Pza
     ThreadPool(unsigned int);
     ~ThreadPool();
 
-    void addTask(std::string const &, Information &);
+    void addTask(std::string const &, Information const &);
     bool getStatus() const;
+    int  getDispo() const;
+    void inc();
+    void dec();
 
     std::pair<std::string, Information>		&getTask(void);
     std::mutex					&getMutex(void);
@@ -45,12 +47,13 @@ namespace Pza
     bool 					empty(void) const;
     void					wait(std::unique_lock<std::mutex> &lock);
 
+   private:
     std::deque<std::pair<std::string, Information>> _Queue;
     std::condition_variable _cdtVar;
     std::mutex _mutexQ;
-   private:
-    std::vector<std::thread> _workers;
+    std::deque<std::thread> _workers;
     bool _stop;
+    int			     _dispo;
   };
 }
 

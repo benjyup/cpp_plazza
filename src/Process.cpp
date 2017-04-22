@@ -4,7 +4,7 @@
 
 #include "Process.hpp"
 
-Pza::Process::Process(int nbrOfThread, const std::vector<std::string> &filenames, Information information) :
+/*Pza::Process::Process(int nbrOfThread, const std::vector<std::string> &filenames, Information information) :
 	_nbrOfThread(nbrOfThread),
 	_pid(fork()),
 	_threadPool(_nbrOfThread),
@@ -27,25 +27,40 @@ Pza::Process::Process(int nbrOfThread, const std::vector<std::string> &filenames
 	  this->_filenames.clear();
 	}
     }
-}
+}*/
 
 Pza::Process::Process(int nbrOfThread) :
-  _nbrOfThread(nbrOfThread),
-  _pid(fork()),
-  _threadPool(_nbrOfThread)
+	_nbrOfThread(nbrOfThread),
+	_threadPool(_nbrOfThread),
+  	_pid(fork())
 {
   if (_pid < 0)
     throw Pza::PlazzaException("Error on forking: " + std::string(strerror(errno)));
-  std::cout << "Process créé" << std::endl;
+  if (_pid == 0)
+    {
+      std::cout << "Process créé" << std::endl;
+      while (true)
+	{
+
+	}
+    }
+}
+
+int 	Pza::Process::getDispo() const {
+	return (_threadPool.getDispo());
+}
+
+void	Pza::Process::AddTask(std::string const &filename, const Information &info)
+{
+  std::cout << "adding task" << std::endl;
+  _threadPool.addTask(filename, info);
 }
 
 Pza::Process::Process(const Pza::Process &other) :
 	_nbrOfThread(other._nbrOfThread),
-	_pid(other._pid),
-	_threadPool(_nbrOfThread)
-{
-
-}
+	_threadPool(_nbrOfThread),
+	_pid(other._pid)
+{}
 
 Pza::Process::~Process(void)
 {

@@ -22,13 +22,14 @@ void 						Pza::Plazza::reception()
   Pza::OrderParser parser;
   std::vector<std::pair<std::vector<std::string>,
 	  Information>> orders;
-//  int nbTask;
+  int nbTask;
+  int j;
 
   while (std::getline(std::cin, line))
     {
       if (!(line.empty()))
 	{
-//	  nbTask = 0;
+	  nbTask = 0;
 	  parser.feed(line);
 	  try
 	    {
@@ -38,12 +39,28 @@ void 						Pza::Plazza::reception()
 	      std::cerr << "Error: " << e.what() << std::endl;
 	    }
 	  this->dump(orders);
-/*
 	  for (const auto &i : orders)
 	    nbTask += i.first.size();
-*/
+	  while (nbTask / _nbrOfThreadPerProcess > _processes.size() || _processes.size() == 0)
+	    this->_processes.emplace_back(_nbrOfThreadPerProcess);
+	  std::cout << "Nbr of Process : " << _processes.size() << std::endl;
 	  for (const auto &it : orders)
-	    this->_processes.emplace_back(_nbrOfThreadPerProcess, it.first, it.second);
+	    {
+	      j = 0;
+	      int process = 0;
+	      auto list_it = _processes.begin();
+	      while (j < it.first.size() &&  list_it != _processes.end())
+		{
+		  list_it->AddTask(it.first[j], it.second);
+		  process++;
+		  if (process == _nbrOfThreadPerProcess)
+		    {
+		      list_it++;
+		      process = 0;
+		    }
+		  j++;
+		}
+	    }
 	  orders.clear();
 	}
     }

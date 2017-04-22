@@ -18,6 +18,7 @@ void		test(Pza::ThreadPool *t)
 {
   std::mutex	&mutex = t->getMutex();
 
+  std::cout << "New Thread"  << std::endl;
   while (42)
     {
       {
@@ -29,16 +30,18 @@ void		test(Pza::ThreadPool *t)
       }
       //auto couple = (t->getTask());
       //call function with the pair argument;
+     // t->dec();
       my_func((t->getTask()));
+     // t->inc();
     }
 }
 
 Pza::ThreadPool::ThreadPool(unsigned int nb)
-	:   _stop(false)
+	:   _stop(false), _dispo(_workers.size())
 {
-  Worker		work(*this);
+  std::cout << "Création de la ThreadPool\n";
   for(unsigned int i = 0; i < nb; ++i)
-    _workers.emplace_back(test, this);
+    _workers.emplace_back(std::thread(test, this)); //check
 }
 
 Pza::ThreadPool::~ThreadPool()
@@ -53,7 +56,7 @@ bool Pza::ThreadPool::getStatus() const {
   return _stop;
 }
 
-void Pza::ThreadPool::addTask(std::string const & filename, Information &to_find) {
+void Pza::ThreadPool::addTask(std::string const & filename, Information const &to_find) {
   {
     std::unique_lock<std::mutex> lock(_mutexQ);
     _Queue.push_back(std::make_pair(filename, to_find));
@@ -66,14 +69,10 @@ Pza::Worker::Worker(ThreadPool &tp) : _pool(tp)  {
 
 Pza::Worker::~Worker() {}
 
-void Pza::Worker::launch(void)
-{
-}
-
 std::pair<std::string, Information> &Pza::ThreadPool::getTask(void)
 {
+  std::unique_lock<std::mutex> lock(_mutexQ);
   std::pair<std::string, Information> &couple = (this->_Queue.front());
-
   this->_Queue.pop_front();
   return (couple);
 }
@@ -91,4 +90,19 @@ void Pza::ThreadPool::wait(std::unique_lock<std::mutex> &lock)
 std::mutex &Pza::ThreadPool::getMutex(void)
 {
   return (this->_mutexQ);
+}
+
+int Pza::ThreadPool::getDispo() const
+{
+  return _dispo;
+}
+
+void Pza::ThreadPool::inc()
+{
+  _dispo++;
+}
+
+void Pza::ThreadPool::dec()
+{
+  _dispo--;
 }

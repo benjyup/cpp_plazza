@@ -20,19 +20,21 @@ namespace Pza
   class Process
   {
    public:
-    Process(int _nbrOfThread, const std::vector<std::string> &filenames, Information information);
+//    Process(int _nbrOfThread, const std::vector<std::string> &filenames, Information information);
     Process(int _nbrOfThread);
     Process(const Process &);
     ~Process(void);
 
+    void AddTask(const std::string &filename, const Information &info);
+    int getDispo() const;
    private:
     int 			_nbrOfThread;
+    ThreadPool			_threadPool;
     pid_t 			_pid;
     unsigned int		_id;
-    ThreadPool			_threadPool;
-    std::vector<std::string>	_filenames;
 
     Process			&operator=(const Process &);
+
   };
 }
 
