@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <iterator>
 #include <regex>
+#include <vector>
+
 unsigned     NbOfLine(const char *file)
 {
     std::ifstream   myfile(file);
@@ -39,7 +41,7 @@ bool			NumberValid(std::string str)
   return (true);
 }
 
-void			myIp(std::string &line)
+void			myIp(std::string &line, std::vector<std::string> &info)
 {
   std::regex r("^([0-9]{1,3}.){3}.([0-9]{1,3})$");
   std::smatch smatch;
@@ -48,12 +50,12 @@ void			myIp(std::string &line)
     {
       for (auto x:smatch)
 	if (IpValid(x) == true)
-	  std::cout << x << std::endl;
+	  info.push_back(x);
       line = smatch.suffix().str();
     }
 }
 
-void			myMail(std::string &line)
+void			myMail(std::string &line, std::vector<std::string> &info)
 {
   std::regex r("(\\w+)(\\.|_)?(\\w*)@(\\w+)(\\.(\\w+))+");
   std::smatch smatch;
@@ -62,12 +64,12 @@ void			myMail(std::string &line)
     {
       for (auto x:smatch)
 	if (MailValid(x) == true)
-	  std::cout << x << std::endl;
+	  info.push_back(x);
       line = smatch.suffix().str();
     }
 }
 
-void			myNumber(std::string &line)
+void			myNumber(std::string &line, std::vector<std::string> &info)
 {
   std::regex r("(0|\\+33)[1-9]([-. ]?[0-9]{2}){4}");
   std::smatch smatch;
@@ -76,23 +78,23 @@ void			myNumber(std::string &line)
     {
       for (auto x:smatch)
 	if (NumberValid(x) == true)
-	  std::cout << x << std::endl;
+	  info.push_back(x);
       line = smatch.suffix().str();
     }
 }
 
-void			StockMyInfo(std::string &line, int typeInfo)
+void			StockMyInfo(std::string &line, int typeInfo, std::vector<std::string> &info)
 {
   switch (typeInfo)
     {
       case 0:
-	myNumber(line);
+	myNumber(line, info);
       break;
       case 1:
-	myMail(line);
+	myMail(line, info);
       break;
       case 2:
-	myIp(line);
+	myIp(line, info);
       break;
       default:
 	break;
@@ -101,9 +103,10 @@ void			StockMyInfo(std::string &line, int typeInfo)
 
 void			ParseFile(const char *file, int posDep, int posFin, int typeInfo) // à remplacer par l'énum)
 {
-  std::ifstream		myfile(file);
-  std::string		line;
-  int			count = 0 ;
+  std::ifstream			myfile(file);
+  std::string			line;
+  int				count = 0 ;
+  std::vector<std::string>	info;
 
   if(!myfile.is_open())
     return ; // throw an Exception
@@ -116,7 +119,7 @@ void			ParseFile(const char *file, int posDep, int posFin, int typeInfo) // à r
 	  if (count < posDep || count > posFin)
 	    continue;
 	  else
-	    StockMyInfo(line, typeInfo);
+	    StockMyInfo(line, typeInfo, info);
 	}
     }
   else
@@ -124,8 +127,13 @@ void			ParseFile(const char *file, int posDep, int posFin, int typeInfo) // à r
       while (myfile.good())
 	{
 	  getline(myfile, line);
-	  StockMyInfo(line, typeInfo);
+	  StockMyInfo(line, typeInfo, info);
 	}
+    }
+// A RETIRER
+  std::vector<std::string>::const_iterator i;
+  for(i=info.begin(); i!=info.end(); ++i){
+      std::cout<<(*i)<<std::endl;
     }
 }
 
@@ -136,7 +144,6 @@ int main(int ac, char **av)
       std::cout << "Fils de pute l'usage c'est : ./parser [0 | 1 | 2] (0 pour les numéros de téléphone sisi, 1 pour les mails, 2 pour les ip" << std::endl;
       return (0);
     }
-    //NbOfLine("test.txt");
-    ParseFile("test.txt", -1, -1, std::stoi(av[1]));
+  ParseFile("test.txt", -1, -1, std::stoi(av[1]));
   return (0);
 }
