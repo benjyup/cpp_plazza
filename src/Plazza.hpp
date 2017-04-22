@@ -11,14 +11,18 @@
 # include <vector>
 # include "PlazzaException.hpp"
 # include "Information.hpp"
-# include "Process.hpp"
+#include "Process.hpp"
+#include "Server.hpp"
 
 namespace Pza
 {
+
+  class Process;
+
   class Plazza
   {
    public:
-    static const std::map<std::string, Information>	P_INFORMATION_LINKS;
+    static const std::string				SOCKET_NAME;
 
     Plazza(int nbrOfThreadPerProcess);
     ~Plazza();
@@ -31,6 +35,8 @@ namespace Pza
 
     int						_nbrOfThreadPerProcess;
     std::list<Pza::Process>			_processes;
+    UnixSocket::Server				_server;
+    std::thread					_threadServer;
 
     void						dump(std::vector<std::pair<std::vector<std::string>,
 	    Information>>orders) const;

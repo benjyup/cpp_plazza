@@ -36,8 +36,11 @@ Pza::Process::Process(int nbrOfThread) :
 {
   if (_pid < 0)
     throw Pza::PlazzaException("Error on forking: " + std::string(strerror(errno)));
+  //UnixSocket::Client		client(Plazza::SOCKET_NAME);
   if (_pid == 0)
     {
+      sleep(2);
+      client.send("Bonjour je suis le thread[" + std::to_string(this->_id) + "]");
       std::cout << "Process créé" << std::endl;
       while (true)
 	{
@@ -60,7 +63,9 @@ Pza::Process::Process(const Pza::Process &other) :
 	_nbrOfThread(other._nbrOfThread),
 	_threadPool(_nbrOfThread),
 	_pid(other._pid)
-{}
+{
+
+}
 
 Pza::Process::~Process(void)
 {

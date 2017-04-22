@@ -25,7 +25,7 @@ namespace Pza
 
       static const std::array<std::string, 4>	HOST_ERRORS;
 
-      Client(const std::string &hostname);
+      Client(const std::string &socket_name);
       ~Client(void);
 
       void					send(const std::string &msg) const;

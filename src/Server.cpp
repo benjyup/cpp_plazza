@@ -34,7 +34,7 @@ Pza::UnixSocket::Server::Server(const std::string &socketName, int simulateConne
 Pza::UnixSocket::Server::~Server(void)
 {
   close(this->_servSocket);
-  close(this->_clientSocket);
+  //close(this->_clientSocket);
 }
 
 std::string				Pza::UnixSocket::Server::recept(const size_t buffLength)
