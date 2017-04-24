@@ -33,7 +33,7 @@ std::string			Pza::Process::SOCKET_NAME = "./.processSocket";
     }
 }*/
 
-void		sigHandler(int s)
+void		sigHandler(int)
 {
 
 }

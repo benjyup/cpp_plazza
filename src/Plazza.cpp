@@ -17,8 +17,8 @@ void			server(Pza::UnixSocket::Server *server, const bool *stop)
     {
       std::cerr << "stop = " << *stop << std::endl;
       std::cerr << "Avant accept\n";
-      //clientSocket = server->getClientConection();
-      if ((msg = server->recept(200)) != "")
+      clientSocket = server->getClientConection();
+      if ((msg = server->recept(clientSocket, 200)) != "")
 	std::cout << "Recept = " << msg << std::endl;
       std::cerr << "Apres accept\n";
     }
@@ -50,8 +50,8 @@ void 						Pza::Plazza::reception()
   Pza::OrderParser parser;
   std::vector<std::pair<std::vector<std::string>,
 	  Information>> orders;
-  int nbTask;
-  int j;
+  unsigned int nbTask;
+  unsigned int j;
 
   while (std::getline(std::cin, line))
     {
@@ -80,11 +80,7 @@ void 						Pza::Plazza::reception()
 	      auto list_it = _processes.begin();
 	      while (j < it.first.size() &&  list_it != _processes.end())
 		{
-		  std::cout << "AVANT ADDING TASK" << std::endl;
-		  for (auto it2 : it.first)
-		    std::cout << it2 << std::endl;
 		  list_it->AddTask(it.first[j], it.second);
-		  //list_it->AddTask(it.first[j], it.second);
 		  process++;
 		  if (process == _nbrOfThreadPerProcess)
 		    {

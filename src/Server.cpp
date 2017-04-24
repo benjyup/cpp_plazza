@@ -78,8 +78,6 @@ std::string Pza::UnixSocket::Server::recept(const int clientSocket, const size_t
   std::string				mesage;
 
   this->_clientSocket = clientSocket;
-
-  socklen_t				clientLen = sizeof(this->_clientAddr);
   char					buff[buffLength];
 
   bzero(buff, buffLength);
