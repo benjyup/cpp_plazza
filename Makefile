@@ -18,8 +18,9 @@ SRCS		=	$(SRC)/main.cpp 		\
 			$(SRC)/ThreadPool.cpp		\
 			$(SRC)/Server.cpp		\
 			$(SRC)/Client.cpp		\
+			$(SRC)/ParserFile.cpp		\
 			$(SRC)/ServerException.cpp	\
-			$(SRC)/ClientException.cpp	\
+			$(SRC)/ClientException.cpp
 
 OBJS		=	$(SRCS:.cpp=.o)
 

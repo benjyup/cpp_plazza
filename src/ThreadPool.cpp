@@ -5,6 +5,7 @@
 #include <iostream>
 #include <unistd.h>
 #include "ThreadPool.hpp"
+#include "ParserFile.hpp"
 
 void		my_func(std::pair<std::string, Information>)
 {
@@ -17,6 +18,7 @@ void		my_func(std::pair<std::string, Information>)
 void		test(Pza::ThreadPool *t)
 {
   std::mutex	&mutex = t->getMutex();
+  ParserFile               _task;
 
   std::cout << "New Thread"  << std::endl;
   while (42)
@@ -31,7 +33,7 @@ void		test(Pza::ThreadPool *t)
       //auto couple = (t->getTask());
       //call function with the pair argument;
      // t->dec();
-      my_func((t->getTask()));
+      _task.parseFile((t->getTask()), -1, -1);
      // t->inc();
     }
 }

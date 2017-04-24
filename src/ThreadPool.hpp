@@ -12,6 +12,7 @@
 #include <deque>
 #include <thread>
 #include "Information.hpp"
+#include "ParserFile.hpp"
 
 namespace Pza
 {
