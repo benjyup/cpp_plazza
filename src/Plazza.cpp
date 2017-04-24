@@ -5,9 +5,25 @@
 #include "Plazza.hpp"
 #include "OrderParser.hpp"
 
+const std::string				Pza::Plazza::SOCKET_NAME = "./plazza_socket";
+
+
+void			server(Pza::UnixSocket::Server *server)
+{
+  std::string		msg;
+
+  while (1)
+    {
+      if ((msg = server->recept(200)) != "")
+	std::cout << "Recept = " << msg << std::endl;
+    }
+}
+
 Pza::Plazza::Plazza(int nbrOfThreadPerProcess) :
 	_nbrOfThreadPerProcess(nbrOfThreadPerProcess),
-	_processes()
+	_processes(),
+	_server(Plazza::SOCKET_NAME, _nbrOfThreadPerProcess),
+	_threadServer(server, &this->_server)
 {
   if (_nbrOfThreadPerProcess <= 0 || _nbrOfThreadPerProcess > 10)
     throw Pza::PlazzaException("The number of thread per process must be between 1 and 10");
@@ -37,6 +53,7 @@ void 						Pza::Plazza::reception()
 	    } catch (const std::exception &e)
 	    {
 	      std::cerr << "Error: " << e.what() << std::endl;
+	      continue ;
 	    }
 	  this->dump(orders);
 	  for (const auto &i : orders)

@@ -14,6 +14,8 @@
 # include "PlazzaException.hpp"
 # include "Information.hpp"
 # include "ThreadPool.hpp"
+# include "Client.hpp"
+# include "Plazza.hpp"
 
 namespace Pza
 {
@@ -34,7 +36,6 @@ namespace Pza
     unsigned int		_id;
 
     Process			&operator=(const Process &);
-
   };
 }
 
