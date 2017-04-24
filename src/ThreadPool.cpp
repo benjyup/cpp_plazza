@@ -30,6 +30,7 @@ void		test(Pza::ThreadPool *t)
 	if (t->getStatus())
 	  break;
       }
+      std::cout << "COUCOU MDR" << std::endl;
       //auto couple = (t->getTask());
       //call function with the pair argument;
      // t->dec();
