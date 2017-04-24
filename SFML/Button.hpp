@@ -5,7 +5,7 @@
 // Login   <benjamin.peixoto@epitech.eu>
 // 
 // Started on  Mon Apr 24 17:32:55 2017 Benjamin
-// Last update Mon Apr 24 18:09:04 2017 Benjamin
+// Last update Mon Apr 24 18:50:32 2017 Benjamin
 //
 
 #ifndef BUTTON_HPP

@@ -5,10 +5,14 @@
 // Login   <benjamin.peixoto@epitech.eu>
 // 
 // Started on  Mon Apr 24 17:31:07 2017 Benjamin
-// Last update Mon Apr 24 18:30:39 2017 Benjamin
+// Last update Mon Apr 24 18:50:29 2017 Benjamin
 //
 
-#include <Button.hpp>
+#include <SFML/Graphics.hpp>
+#include <THOR/Shapes.hpp>
+#include <THOR/Graphics.hpp>
+
+#include "Button.hpp"
 
 gui::button::button()
 {
@@ -79,7 +83,11 @@ gui::button::button(std::string s, sf::Font& font, sf::Vector2f position, sf::Ui
   m_borderThickness = 0.f;
   m_size = sf::Vector2f(m_text.getGlobalBounds().width * 1.5f, m_text.getGlobalBounds().height * 1.5f);
 
-  m_button = thor::Shapes::roundedRect(m_size, m_borderRadius, m_bgNormal, m_borderThickness, m_border);
+  m_button.setPointCount(4);
+  m_button.setPoint(1, sf::Vector2f(120, 50));
+  m_button.setPoint(0, sf::Vector2f(150, 0));
+  m_button.setPoint(2, sf::Vector2f(30, 60));
+  m_button.setPoint(3, sf::Vector2f(0, 10));
   m_button.setOrigin(m_button.getGlobalBounds().width/2, m_button.getGlobalBounds().height/2);
   m_button.setPosition(m_position);
 
@@ -106,7 +114,6 @@ void gui::button::setSize(unsigned int size)
   m_shadow.setCharacterSize(m_fontSize);
   m_shadow.setOrigin(m_shadow.getGlobalBounds().width/2, m_shadow.getGlobalBounds().height/2);
   m_size = sf::Vector2f(m_text.getGlobalBounds().width * 1.5f, (m_text.getGlobalBounds().height + m_text.getGlobalBounds().height) * 1.5f);
-  m_button = thor::Shapes::roundedRect(m_size, m_borderRadius, m_bgNormal, m_borderThickness, m_border);
 }
 
 void gui::button::setStyle(sf::Uint32 style)
@@ -182,7 +189,6 @@ void gui::button::update(sf::Event& e, sf::RenderWindow& window)
     case gui::style::none:
       {
 	m_size = sf::Vector2f(m_text.getGlobalBounds().width * 1.5f, m_text.getGlobalBounds().height * 1.75f);
-	m_button = thor::Shapes::roundedRect(m_size, m_borderRadius, m_bgNormal, m_borderThickness, m_border);
 	m_button.setOrigin(m_button.getGlobalBounds().width/2, m_button.getGlobalBounds().height/2);
 	m_button.setPosition(m_position);
 	m_text.setOrigin(m_text.getGlobalBounds().width/2, m_text.getGlobalBounds().height/2);
@@ -198,7 +204,6 @@ void gui::button::update(sf::Event& e, sf::RenderWindow& window)
     case gui::style::save:
       {
 	m_size = sf::Vector2f(m_text.getGlobalBounds().width * 1.5f, m_text.getGlobalBounds().height * 1.75f);
-	m_button = thor::Shapes::roundedRect(m_size, m_borderRadius, m_bgNormal, m_borderThickness, m_border);
 	m_button.setOrigin(m_button.getGlobalBounds().width/2, m_button.getGlobalBounds().height/2);
 	m_button.setPosition(m_position);
 	m_text.setOrigin(m_text.getGlobalBounds().width/2, m_text.getGlobalBounds().height/2);
@@ -214,7 +219,6 @@ void gui::button::update(sf::Event& e, sf::RenderWindow& window)
     case gui::style::cancel:
       {
 	m_size = sf::Vector2f(m_text.getGlobalBounds().width * 1.5f, m_text.getGlobalBounds().height * 1.75f);
-	m_button = thor::Shapes::roundedRect(m_size, m_borderRadius, m_bgNormal, m_borderThickness, m_border);
 	m_button.setOrigin(m_button.getGlobalBounds().width/2, m_button.getGlobalBounds().height/2);
 	m_button.setPosition(m_position);
 	m_text.setOrigin(m_text.getGlobalBounds().width/2, m_text.getGlobalBounds().height/2);
@@ -230,7 +234,6 @@ void gui::button::update(sf::Event& e, sf::RenderWindow& window)
     case gui::style::clean:
       {
 	m_size = sf::Vector2f(m_text.getGlobalBounds().width * 1.5f, m_text.getGlobalBounds().height * 1.75f);
-	m_button = thor::Shapes::roundedRect(m_size, m_borderRadius, m_bgNormal, m_borderThickness, m_border);
 	m_button.setOrigin(m_button.getGlobalBounds().width/2, m_button.getGlobalBounds().height/2);
 	m_button.setPosition(m_position);
 	m_text.setOrigin(m_text.getGlobalBounds().width/2, m_text.getGlobalBounds().height/2);
@@ -246,10 +249,7 @@ void gui::button::update(sf::Event& e, sf::RenderWindow& window)
     default:
       break;
     }
-
-  //perform updates for user mouse interactions
   sf::Vector2i m_mousePosition = sf::Mouse::getPosition(window);
-
   bool mouseInButton =    m_mousePosition.x >= m_button.getPosition().x - m_button.getGlobalBounds().width/2
     && m_mousePosition.x <= m_button.getPosition().x + m_button.getGlobalBounds().width/2
     && m_mousePosition.y >= m_button.getPosition().y - m_button.getGlobalBounds().height/2
