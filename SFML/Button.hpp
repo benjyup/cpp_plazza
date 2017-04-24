@@ -14,8 +14,6 @@
 #include <iostream>
 
 #include <SFML/Graphics.hpp>
-#include <THOR/Shapes.hpp>
-#include <THOR/Graphics.hpp>
 
 namespace gui
 {
