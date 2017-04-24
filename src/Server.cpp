@@ -27,7 +27,7 @@ Pza::UnixSocket::Server::Server(const std::string &socketName, int simulateConne
     {
       throw Pza::UnixSocket::ServerException("Error on bindig: " + std::string(strerror(errno)));
     }
-  if (listen(this->_servSocket, 2) != 0)
+  if (listen(this->_servSocket, simulateConnectionAllowed) != 0)
     throw Pza::UnixSocket::ServerException("Error on listenning: " + std::string(strerror(errno)));
 }
 
@@ -56,7 +56,7 @@ void					Pza::UnixSocket::Server::notify(const std::string &notification) const
 {
   const ssize_t				buffLength = notification.size();
 
-  if (write(this->_clientSocket, notification.c_str(), buffLength) != buffLength)
+  if (write(this->_clientSocket, notification .c_str(), buffLength) != buffLength)
     throw Pza::UnixSocket::ServerException("Error on writing in the socket: " + std::string(strerror(errno)));
 }
 
@@ -78,7 +78,13 @@ std::string Pza::UnixSocket::Server::recept(const int clientSocket, const size_t
   std::string				mesage;
 
   this->_clientSocket = clientSocket;
-  mesage = this->recept(buffLength);
+
+  socklen_t				clientLen = sizeof(this->_clientAddr);
+  char					buff[buffLength];
+
+  bzero(buff, buffLength);
+  if (::read(this->_clientSocket, buff, buffLength) < 0)
+    throw Pza::UnixSocket::ServerException("Error on reading socket: " + std::string(strerror(errno)));
   this->_clientSocket = save;
-  return (mesage);
+  return (std::string(buff));
 }

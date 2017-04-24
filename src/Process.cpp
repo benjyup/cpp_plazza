@@ -33,6 +33,11 @@ std::string			Pza::Process::SOCKET_NAME = "./.processSocket";
     }
 }*/
 
+void		sigHandler(int s)
+{
+
+}
+
 Pza::Process::Process(int nbrOfThread) :
 	_nbrOfThread(nbrOfThread),
 	_threadPool(_nbrOfThread),
@@ -40,32 +45,38 @@ Pza::Process::Process(int nbrOfThread) :
 	_id(Pza::Process::ID),
 	_socketName(Pza::Process::SOCKET_NAME + std::to_string(Pza::Process::ID++))
 {
+  signal(SIGUSR1, sigHandler);
   if (_pid < 0)
     throw Pza::PlazzaException("Error on forking: " + std::string(strerror(errno)));
-  UnixSocket::Client		client(Pza::Plazza::SOCKET_NAME);
-  UnixSocket::Server		_server(_socketName, 5);
   if (_pid == 0)
     {
+      UnixSocket::Client		client(Pza::Plazza::SOCKET_NAME);
+      //UnixSocket::Server		_server(_socketName, 5);
       UnixSocket::Server		_server(_socketName, nbrOfThread);
       int 				clientSocket;
-      kill(getppid(), SIGCONT);
+      kill(getppid(), SIGUSR1);
 
       client.send("Bonjour je suis le thread[" + std::to_string(this->_id) + "]");
       std::cout << "Process créé" << std::endl;
       while (true)
 	{
-	  try {
+	  try
+	    {
 	      clientSocket = _server.getClientConection();
+	      std::cout << "client connecté" << std::endl;
 	      std::string order(_server.recept(clientSocket, 260));
 	      std::cout << "Process[" << this->_id << "] J'ai reçu cette commande: " << order << std::endl;
+/*
+	      order = (_server.recept(clientSocket, 260));
+	      std::cout << "Process[" << this->_id << "] J'ai reçu cette commande: " << order << std::endl;
+*/
 	    } catch (const std::exception &e) {
-	      std::cerr << "Process[" << this->_id << "] error: " << e.what() << std::endl;
+	      std::cerr << "Process[" << _id << "] error: " << e.what() << std::endl;
 	    }
 	  close(clientSocket);
 	}
     }
-  kill(getpid(), SIGSTOP);
-  //sleep(5);
+  pause();
 }
 
 int 	Pza::Process::getDispo() const {
@@ -77,11 +88,28 @@ void	Pza::Process::AddTask(std::string const &filename, const Information &info)
   try {
       std::cout << "adding task | " << _socketName << std::endl;
       UnixSocket::Client		client(this->_socketName);
-      client.send(filename  + " - " +std::to_string(info));
+      client.send(filename  + " -> " +std::to_string(info));
     } catch (const std::exception &e) {
       std::cerr << "WArning: Not able to send task: " << e.what() << std::endl;
     }
-  //_threadPool.addTask(filename, info);
+/*
+  try {
+      std::cout << "adding task | " << _socketName << std::endl;
+      UnixSocket::Client		client(this->_socketName);
+      client.send(filename  + " -> " +std::to_string(info));
+    } catch (const std::exception &e) {
+      std::cerr << "WArning: Not able to send task: " << e.what() << std::endl;
+    }
+*/
+/*
+  try {
+      std::cout << "adding task | " << _socketName << std::endl;
+      UnixSocket::Client		client(this->_socketName);
+      client.send("length pour read = " + std::to_string(filename.size()));
+    } catch (const std::exception &e) {
+      std::cerr << "WArning: Not able to send task: " << e.what() << std::endl;
+    }
+*/
 }
 
 Pza::Process::Process(const Pza::Process &other) :
@@ -98,4 +126,3 @@ Pza::Process::~Process(void)
   std::cout << getpid() << " " << _pid << std::endl;
   kill(this->_pid, SIGINT);
 }
-

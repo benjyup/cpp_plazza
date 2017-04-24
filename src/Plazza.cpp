@@ -80,8 +80,11 @@ void 						Pza::Plazza::reception()
 	      auto list_it = _processes.begin();
 	      while (j < it.first.size() &&  list_it != _processes.end())
 		{
+		  std::cout << "AVANT ADDING TASK" << std::endl;
+		  for (auto it2 : it.first)
+		    std::cout << it2 << std::endl;
 		  list_it->AddTask(it.first[j], it.second);
-		  list_it->AddTask(it.first[j], it.second);
+		  //list_it->AddTask(it.first[j], it.second);
 		  process++;
 		  if (process == _nbrOfThreadPerProcess)
 		    {
