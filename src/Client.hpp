@@ -28,7 +28,7 @@ namespace Pza
       Client(const std::string &socket_name);
       ~Client(void);
 
-      void					send(const std::string &msg) const;
+      void					send(const std::string &msg);
       std::string				getNotification(const size_t buffLength) const;
 
     private:

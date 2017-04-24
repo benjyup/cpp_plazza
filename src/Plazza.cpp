@@ -8,14 +8,19 @@
 const std::string				Pza::Plazza::SOCKET_NAME = "./plazza_socket";
 
 
-void			server(Pza::UnixSocket::Server *server)
+void			server(Pza::UnixSocket::Server *server, const bool *stop)
 {
   std::string		msg;
+  int 			clientSocket;
 
-  while (1)
+  while (!(*stop))
     {
+      std::cerr << "stop = " << *stop << std::endl;
+      std::cerr << "Avant accept\n";
+      //clientSocket = server->getClientConection();
       if ((msg = server->recept(200)) != "")
 	std::cout << "Recept = " << msg << std::endl;
+      std::cerr << "Apres accept\n";
     }
 }
 
@@ -23,14 +28,21 @@ Pza::Plazza::Plazza(int nbrOfThreadPerProcess) :
 	_nbrOfThreadPerProcess(nbrOfThreadPerProcess),
 	_processes(),
 	_server(Plazza::SOCKET_NAME, _nbrOfThreadPerProcess),
-	_threadServer(server, &this->_server)
+	_stopServer(false),
+	_threadServer(server, &this->_server, &_stopServer)
 {
   if (_nbrOfThreadPerProcess <= 0 || _nbrOfThreadPerProcess > 10)
     throw Pza::PlazzaException("The number of thread per process must be between 1 and 10");
 }
 
 Pza::Plazza::~Plazza()
-{ }
+{
+  UnixSocket::Client				_client(SOCKET_NAME);
+  std::cerr << "~Plazza " << SOCKET_NAME<< std::endl;
+  this->_stopServer = true;
+  _client.send("stop");
+  _threadServer.join();
+}
 
 void 						Pza::Plazza::reception()
 {
@@ -68,6 +80,7 @@ void 						Pza::Plazza::reception()
 	      auto list_it = _processes.begin();
 	      while (j < it.first.size() &&  list_it != _processes.end())
 		{
+		  list_it->AddTask(it.first[j], it.second);
 		  list_it->AddTask(it.first[j], it.second);
 		  process++;
 		  if (process == _nbrOfThreadPerProcess)

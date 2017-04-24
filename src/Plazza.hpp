@@ -9,10 +9,11 @@
 # include <sstream>
 # include <map>
 # include <vector>
+# include <atomic>
 # include "PlazzaException.hpp"
 # include "Information.hpp"
-#include "Process.hpp"
-#include "Server.hpp"
+# include "Server.hpp"
+# include "Process.hpp"
 
 namespace Pza
 {
@@ -36,6 +37,7 @@ namespace Pza
     int						_nbrOfThreadPerProcess;
     std::list<Pza::Process>			_processes;
     UnixSocket::Server				_server;
+    bool 					_stopServer;
     std::thread					_threadServer;
 
     void						dump(std::vector<std::pair<std::vector<std::string>,

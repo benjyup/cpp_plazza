@@ -30,10 +30,15 @@ namespace Pza
     void AddTask(const std::string &filename, const Information &info);
     int getDispo() const;
    private:
+
+    static std::string		SOCKET_NAME;
+    static unsigned int		ID;
+
     int 			_nbrOfThread;
     ThreadPool			_threadPool;
     pid_t 			_pid;
     unsigned int		_id;
+    std::string			_socketName;
 
     Process			&operator=(const Process &);
   };

@@ -59,3 +59,26 @@ void					Pza::UnixSocket::Server::notify(const std::string &notification) const
   if (write(this->_clientSocket, notification.c_str(), buffLength) != buffLength)
     throw Pza::UnixSocket::ServerException("Error on writing in the socket: " + std::string(strerror(errno)));
 }
+
+int Pza::UnixSocket::Server::getClientConection(void)
+{
+  int 					clientSocket;
+  socklen_t				clientLen = sizeof(this->_clientAddr);
+
+  if ((clientSocket = accept(this->_servSocket,
+				    reinterpret_cast<struct sockaddr *>(&this->_clientAddr),
+				    &clientLen)) < 0)
+    throw Pza::UnixSocket::ServerException("Error on accepting: " + std::string(strerror(errno)));
+  return (clientSocket);
+}
+
+std::string Pza::UnixSocket::Server::recept(const int clientSocket, const size_t buffLength)
+{
+  int 					save = this->_clientSocket;
+  std::string				mesage;
+
+  this->_clientSocket = clientSocket;
+  mesage = this->recept(buffLength);
+  this->_clientSocket = save;
+  return (mesage);
+}

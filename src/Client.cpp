@@ -2,6 +2,7 @@
 // Created by vincent on 21/04/17.
 //
 
+#include <iostream>
 #include "Client.hpp"
 
 const std::array<std::string, 4>		Pza::UnixSocket::Client::HOST_ERRORS = {
@@ -36,10 +37,17 @@ Pza::UnixSocket::Client::~Client(void)
   close(this->_socket);
 }
 
-void				Pza::UnixSocket::Client::send(const std::string &msg) const
+void				Pza::UnixSocket::Client::send(const std::string &msg)
 {
+/*
+  if (connect(this->_socket,
+	      reinterpret_cast<struct sockaddr *>(&(this->_servAddr)),
+	      sizeof(this->_servAddr)) < 0)
+    throw Pza::UnixSocket::ClientException("Connection failed: " + std::string(strerror(errno)));
+*/
   if (write(this->_socket, msg.c_str(), msg.size()) != static_cast<ssize_t>(msg.size()))
     throw Pza::UnixSocket::ClientException("message sending failded");
+  std::cerr << "send fini" << std::endl;
 }
 
 std::string			Pza::UnixSocket::Client::getNotification(const size_t buffLength) const

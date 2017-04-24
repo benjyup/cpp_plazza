@@ -28,7 +28,8 @@ namespace Pza
 	Server(const std::string &_socketName, int simulateConnectionAllowed);
 	~Server(void);
 
-    
+    	int 			getClientConection(void);
+	std::string		recept(const int clientSocket, const size_t buffLength);
 	std::string		recept(const size_t buffLength);
 	void			notify(const std::string &notification) const;
 
