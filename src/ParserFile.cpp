@@ -20,7 +20,6 @@ ParserFile::ParserFile()
 
 ParserFile::~ParserFile()
 {
-  _info.clear();
 }
 
 bool			ParserFile::infoValid(std::string str, int info)
@@ -107,4 +106,5 @@ void			ParserFile::parseFile(std::pair<std::string, int> task, int posDep, int p
       line = line + *i + "\n";
     }
   //client.send(line);
+  _info.clear();
 }
