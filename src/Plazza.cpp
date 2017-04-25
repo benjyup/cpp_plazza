@@ -11,40 +11,36 @@ void			clientReception(std::mutex &displayMutex,
 					    Pza::UnixSocket::Server &server,
 					    const int &clientSocket)
 {
-  std::string		msg;
-
-  msg = server.recept(clientSocket, 200);
-
   std::unique_lock<std::mutex> lock(displayMutex);
+  std::string		msg = server.recept(clientSocket, 4096);
+
   if (!(msg.empty()))
   	std::cout << "Recept = " << msg << std::endl;
 }
 
-void 			test(int &)
+void				server(Pza::UnixSocket::Server *server, const bool *stop)
 {
-
-}
-
-void			server(Pza::UnixSocket::Server *server, const bool *stop)
-{
-  std::string		msg;
-  int 			clientSocket;
-  std::mutex		displayMutex;
+  std::string			msg;
+  int 				clientSocket;
+  std::mutex			displayMutex;
+  std::list<std::thread>	threads;
 
   while (!(*stop))
     {
       std::cerr << "stop = " << *stop << std::endl;
       std::cerr << "Avant accept\n";
       clientSocket = server->getClientConection();
-      std::thread threadClientReception(clientReception, std::ref(displayMutex), std::ref(*server), std::ref(clientSocket));
+      threads.emplace_back(clientReception, std::ref(displayMutex), std::ref(*server), std::ref(clientSocket));
 
-      threadClientReception.join();
+      std::cout << "APRES JOIN" << std::endl;
 /*
       if ((msg = server->recept(clientSocket, 200)) != "")
 	std::cout << "Recept = " << msg << std::endl;
 */
       std::cerr << "Apres accept\n";
     }
+  for (auto &it : threads)
+    it.join();
 }
 
 Pza::Plazza::Plazza(int nbrOfThreadPerProcess) :

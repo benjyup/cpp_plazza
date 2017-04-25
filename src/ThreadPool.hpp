@@ -48,6 +48,8 @@ namespace Pza
     bool 					empty(void) const;
     void					wait(std::unique_lock<std::mutex> &lock);
 
+    ParserFile               			parser;
+
    private:
     std::deque<std::pair<std::string, Information>> _Queue;
     std::condition_variable _cdtVar;

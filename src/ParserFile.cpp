@@ -8,8 +8,11 @@
 #include <iterator>
 #include <regex>
 #include <vector>
+#include <mutex>
 #include "ParserFile.hpp"
 #include "Information.hpp"
+#include "Client.hpp"
+#include "Plazza.hpp"
 
 ParserFile::ParserFile()
 {
@@ -93,9 +96,15 @@ void			ParserFile::parseFile(std::pair<std::string, int> task, int posDep, int p
 	  stockMyInfo(line, task);
 	}
     }
+
 // A RETIRER
+  line.clear();
+  std::unique_lock<std::mutex>	lock(this->_sendMutex);
+  Pza::UnixSocket::Client	client(Pza::Plazza::SOCKET_NAME);
   std::vector<std::string>::const_iterator i;
   for(i=_info.begin(); i!=_info.end(); ++i){
-      std::cout<<(*i)<<std::endl;
+      std::cout << "Je lis: " << *i << std::endl;
+      line = line + *i + "\n";
     }
+  //client.send(line);
 }

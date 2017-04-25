@@ -22,6 +22,7 @@ class ParserFile
 
  protected:
   std::vector<std::string>	_info;
+  std::mutex			_sendMutex;
 };
 
 
