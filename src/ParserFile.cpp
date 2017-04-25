@@ -20,84 +20,49 @@ ParserFile::~ParserFile()
   _info.clear();
 }
 
-bool			ParserFile::mailValid(std::string str){
-  if (str.find("@") == std::string::npos)
-    return (false);
-  return (true);
-}
-
-bool			ParserFile::ipValid(std::string str){
-  if (std::count_if(str.begin(), str.end(), std::bind1st(std::equal_to<char>(),'.')) != 3)
-    return (false);
-  return (true);
-}
-
-bool			ParserFile::numberValid(std::string str){
-  if (str.size() < 10)
-    return (false);
-  return (true);
-}
-
-void			ParserFile::myIp(std::string &line)
+bool			ParserFile::infoValid(std::string str, int info)
 {
-  std::regex r("^([0-9]{1,3}.){3}.([0-9]{1,3})$");
+  if (info == 0)
+    {
+      if (str.size() < 10)
+	return (false);
+      return (true);
+    }
+  else if (info == 1)
+      {
+	if (str.find("@") == std::string::npos)
+	  return (false);
+	return (true);
+      }
+    else
+      {
+	if (std::count_if(str.begin(), str.end(), std::bind1st(std::equal_to<char>(),'.')) != 3)
+	  return (false);
+	return (true);
+      }
+}
+
+void			ParserFile::stockMyInfo(std::string &line, std::pair<std::string, int> task) {
+  std::regex r;
   std::smatch smatch;
+
+  if (task.second == 2)
+    r = "^([0-9]{1,3}.){3}.([0-9]{1,3})$";
+  if (task.second == 1)
+    r = "(\\w+)(\\.|_)?(\\w*)@(\\w+)(\\.(\\w+))+";
+  if (task.second == 0)
+    r = "(0|\\+33)[1-9]([-. ]?[0-9]{2}){4}";
 
   while (std::regex_search(line, smatch, r))
     {
       for (auto x:smatch)
-	if (ipValid(x) == true)
+	if (infoValid(x, task.second) == true)
 	  _info.push_back(x);
       line = smatch.suffix().str();
     }
 }
 
-void			ParserFile::myMail(std::string &line)
-{
-  std::regex r("(\\w+)(\\.|_)?(\\w*)@(\\w+)(\\.(\\w+))+");
-  std::smatch smatch;
-
-  while (std::regex_search(line, smatch, r))
-    {
-      for (auto x:smatch)
-	if (mailValid(x) == true)
-	  _info.push_back(x);
-      line = smatch.suffix().str();
-    }
-}
-
-void			ParserFile::myNumber(std::string &line)
-{
-  std::regex r("(0|\\+33)[1-9]([-. ]?[0-9]{2}){4}");
-  std::smatch smatch;
-
-  while (std::regex_search(line, smatch, r))
-    {
-      for (auto x:smatch)
-	if (numberValid(x) == true)
-	  _info.push_back(x);
-      line = smatch.suffix().str();
-    }
-}
-
-void			ParserFile::stockMyInfo(std::string &line, int typeInfo) { //typeInfo doit etre du type Information
-  switch (typeInfo)
-    {
-      case 0:
-	myNumber(line);
-      break;
-      case 1:
-	myMail(line);
-      break;
-      case 2:
-	myIp(line);
-      break;
-      default:
-	break;
-    }
-}
-
-void			ParserFile::parseFile(std::pair<std::string, int> task, int posDep, int posFin){ // mettre des valeur par défaut pour posDep et posFin
+void			ParserFile::parseFile(std::pair<std::string, int> task, int posDep, int posFin){
   std::ifstream			myfile(task.first);
   std::string			line;
   int				count = 0;
@@ -117,7 +82,7 @@ void			ParserFile::parseFile(std::pair<std::string, int> task, int posDep, int p
 	  if (count < posDep || count > posFin)
 	    continue;
 	  else
-	    stockMyInfo(line, task.second);
+	    stockMyInfo(line, task);
 	}
     }
   else
@@ -125,7 +90,7 @@ void			ParserFile::parseFile(std::pair<std::string, int> task, int posDep, int p
       while (myfile.good())
 	{
 	  getline(myfile, line);
-	  stockMyInfo(line, task.second);
+	  stockMyInfo(line, task);
 	}
     }
 // A RETIRER

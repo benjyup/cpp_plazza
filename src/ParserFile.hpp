@@ -8,6 +8,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include "Information.hpp"
 
 class ParserFile
 {
@@ -15,15 +16,8 @@ class ParserFile
   ParserFile();
   ~ParserFile();
 
-  bool			mailValid(std::string str);
-  bool			ipValid(std::string str);
-  bool			numberValid(std::string str);
-
-  void			myIp(std::string &line);
-  void			myNumber(std::string &line);
-  void			myMail(std::string &line);
-
-  void			stockMyInfo(std::string &line, int typeInfo);
+  bool			infoValid(std::string str, int info);
+  void			stockMyInfo(std::string &line, std::pair<std::string, int> task);
   void			parseFile(std::pair<std::string, int> task, int posDep, int posFin);
 
  protected:
