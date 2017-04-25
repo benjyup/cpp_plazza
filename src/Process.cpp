@@ -31,7 +31,7 @@ Pza::Process::Process(int nbrOfThread) :
       unsigned long			size;
       kill(getppid(), SIGUSR1);
 
-      client.send("Bonjour je suis le thread[" + std::to_string(this->_id) + "]");
+      client.send("Bonjour je suis le Process[" + std::to_string(this->_id) + "]");
       std::cout << "Process créé" << std::endl;
       while (true)
 	{
