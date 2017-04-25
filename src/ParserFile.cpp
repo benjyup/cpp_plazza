@@ -80,7 +80,7 @@ void			ParserFile::myNumber(std::string &line)
     }
 }
 
-void			ParserFile::stockMyInfo(std::string &line, int typeInfo){
+void			ParserFile::stockMyInfo(std::string &line, int typeInfo) { //typeInfo doit etre du type Information
   switch (typeInfo)
     {
       case 0:
@@ -97,13 +97,17 @@ void			ParserFile::stockMyInfo(std::string &line, int typeInfo){
     }
 }
 
-void			ParserFile::parseFile(std::pair<std::string, int> task, int posDep, int posFin){
+void			ParserFile::parseFile(std::pair<std::string, int> task, int posDep, int posFin){ // mettre des valeur par défaut pour posDep et posFin
   std::ifstream			myfile(task.first);
   std::string			line;
   int				count = 0;
 
+  std::cout << "Je rentre dans la fonction avec : filename = " << task.first << " info = " << task.second << std::endl;
   if(!myfile.is_open())
-    return ; // throw an Exception
+    {
+      std::cout << "Error: \"" << task.first << "\" doesn't exist." << std::endl;
+      return ;
+    }
   if (posDep != -1 && posFin != -1)
     {
       while (myfile.good())

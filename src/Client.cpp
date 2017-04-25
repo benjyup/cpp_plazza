@@ -33,15 +33,14 @@ Pza::UnixSocket::Client::Client(const std::string &socket_name) :
 
 Pza::UnixSocket::Client::~Client(void)
 {
-
+  close(this->_socket);
 }
 
 void				Pza::UnixSocket::Client::send(const std::string &msg)
 {
   if (write(this->_socket, msg.c_str(), msg.size()) != static_cast<ssize_t>(msg.size()))
     throw Pza::UnixSocket::ClientException("message sending failded");
-  std::cerr << "send fini -> " << msg <<std::endl;
-  close(this->_socket);
+  //std::cerr << "send fini -> " << msg <<std::endl;
 }
 
 std::string			Pza::UnixSocket::Client::getNotification(const size_t buffLength) const

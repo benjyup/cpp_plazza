@@ -28,19 +28,21 @@ namespace Pza
     ~Process(void);
 
     void AddTask(const std::string &filename, const Information &info);
-    int getDispo() const;
+    //int getDispo() const;
    private:
 
     static std::string		SOCKET_NAME;
     static unsigned int		ID;
 
     int 			_nbrOfThread;
-    ThreadPool			_threadPool;
+//    ThreadPool			_threadPool;
     pid_t 			_pid;
     unsigned int		_id;
     std::string			_socketName;
 
     Process			&operator=(const Process &);
+    template<typename T>
+    T       toNumber(const std::string &str);
   };
 }
 

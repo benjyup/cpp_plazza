@@ -108,8 +108,12 @@ void			ParseFile(const char *file, int posDep, int posFin, int typeInfo) // à r
   int				count = 0 ;
   std::vector<std::string>	info;
 
+  std::cout << "Je rentre dans la fonction" << std::endl;
   if(!myfile.is_open())
-    return ; // throw an Exception
+    {
+      std::cout << "Le fichier n'existe pas" << std::endl;
+      return ; // throw an Exception
+    }
   if (posDep != -1 && posFin != -1)
     {
       while (myfile.good())
@@ -130,6 +134,8 @@ void			ParseFile(const char *file, int posDep, int posFin, int typeInfo) // à r
 	  StockMyInfo(line, typeInfo, info);
 	}
     }
+  sleep(3);
+  std::cout << "J'ai récupéré ça : " << std::endl;
 // A RETIRER
   std::vector<std::string>::const_iterator i;
   for(i=info.begin(); i!=info.end(); ++i){

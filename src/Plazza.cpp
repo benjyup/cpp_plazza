@@ -7,19 +7,42 @@
 
 const std::string				Pza::Plazza::SOCKET_NAME = "./plazza_socket";
 
+void			clientReception(std::mutex &displayMutex,
+					    Pza::UnixSocket::Server &server,
+					    const int &clientSocket)
+{
+  std::string		msg;
+
+  msg = server.recept(clientSocket, 200);
+
+  std::unique_lock<std::mutex> lock(displayMutex);
+  if (!(msg.empty()))
+  	std::cout << "Recept = " << msg << std::endl;
+}
+
+void 			test(int &)
+{
+
+}
 
 void			server(Pza::UnixSocket::Server *server, const bool *stop)
 {
   std::string		msg;
   int 			clientSocket;
+  std::mutex		displayMutex;
 
   while (!(*stop))
     {
       std::cerr << "stop = " << *stop << std::endl;
       std::cerr << "Avant accept\n";
       clientSocket = server->getClientConection();
+      std::thread threadClientReception(clientReception, std::ref(displayMutex), std::ref(*server), std::ref(clientSocket));
+
+      threadClientReception.join();
+/*
       if ((msg = server->recept(clientSocket, 200)) != "")
 	std::cout << "Recept = " << msg << std::endl;
+*/
       std::cerr << "Apres accept\n";
     }
 }
