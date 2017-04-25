@@ -31,13 +31,6 @@ void				server(Pza::UnixSocket::Server *server, const bool *stop)
       std::cerr << "Avant accept\n";
       clientSocket = server->getClientConection();
       threads.emplace_back(clientReception, std::ref(displayMutex), std::ref(*server), std::ref(clientSocket));
-
-      std::cout << "APRES JOIN" << std::endl;
-/*
-      if ((msg = server->recept(clientSocket, 200)) != "")
-	std::cout << "Recept = " << msg << std::endl;
-*/
-      std::cerr << "Apres accept\n";
     }
   for (auto &it : threads)
     it.join();

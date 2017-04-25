@@ -103,8 +103,8 @@ void			ParserFile::parseFile(std::pair<std::string, int> task, int posDep, int p
   std::vector<std::string>::const_iterator i;
   for(i=_info.begin(); i!=_info.end(); ++i){
       std::cout << "Je lis: " << *i << std::endl;
-      line = line + *i + "\n";
+      line = line + *i + "|\n";
     }
-  //client.send(line);
+  client.send(line);
   _info.clear();
 }
