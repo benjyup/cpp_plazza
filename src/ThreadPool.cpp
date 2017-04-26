@@ -18,6 +18,7 @@ void		my_func(std::pair<std::string, Information>)
 void		test(Pza::ThreadPool *t)
 {
   std::mutex	&mutex = t->getMutex();
+  std::pair<std::string, Information>	pair;
 
   std::cout << "New Thread"  << std::endl;
   while (42)
@@ -28,12 +29,13 @@ void		test(Pza::ThreadPool *t)
 	  t->wait(lock);
 	if (t->getStatus())
 	  break;
-      }
+	pair = t->getTask();
       std::cout << "COUCOU MDR" << std::endl;
       //auto couple = (t->getTask());
       //call function with the pair argument;
      // t->dec();
-      t->parser.parseFile((t->getTask()), -1, -1);
+      t->parser.parseFile(pair, -1, -1);
+      }
      // t->inc();
     }
 }
@@ -73,7 +75,6 @@ Pza::Worker::~Worker() {}
 
 std::pair<std::string, Information> &Pza::ThreadPool::getTask(void)
 {
-  std::unique_lock<std::mutex> lock(_mutexQ);
   std::pair<std::string, Information> &couple = (this->_Queue.front());
   this->_Queue.pop_front();
   return (couple);

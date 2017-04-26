@@ -38,7 +38,7 @@ Pza::Process::Process(int nbrOfThread) :
 	  try
 	    {
 	      clientSocket = _server.getClientConection();
-	      //std::cout << "client connecté" << std::endl;
+	      std::cout << "client connecté" << std::endl;
 
 	      std::string order(_server.recept(clientSocket, 5));
 	      //std::cout << "Process[" << this->_id << "] J'ai reçu cette commande: " << order << std::endl;
@@ -47,6 +47,7 @@ Pza::Process::Process(int nbrOfThread) :
 	      size = toNumber<unsigned long>(order);
 
 	      order = (_server.recept(clientSocket, size + 1));
+	      _server.notify("OK");
 	      //std::cout << "Process[" << this->_id << "] J'ai reçu cette commande: " << order<< std::endl;
 
 	      threadPool.addTask(order.substr(0, size), TO_INFORMATION.at( this->toNumber<int>(std::string(1, order[size]))));
@@ -74,6 +75,7 @@ void	Pza::Process::AddTask(std::string const &filename, const Information &info)
       client.getNotification(2);
       //std::cout << "Notification = " << client.getNotification(2) << std::endl;
       client.send(filename + std::to_string(info));
+      client.getNotification(2);
     } catch (const std::exception &e) {
       std::cerr << "WArning: Not able to send task: " << e.what() << std::endl;
     }

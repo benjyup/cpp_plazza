@@ -98,7 +98,7 @@ void			ParserFile::parseFile(std::pair<std::string, int> task, int posDep, int p
 
 // A RETIRER
   line.clear();
-  std::unique_lock<std::mutex>	lock(this->_sendMutex);
+//  std::unique_lock<std::mutex>	lock(this->_sendMutex);
   Pza::UnixSocket::Client	client(Pza::Plazza::SOCKET_NAME);
   std::vector<std::string>::const_iterator i;
   for(i=_info.begin(); i!=_info.end(); ++i){

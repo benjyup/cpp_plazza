@@ -2,6 +2,7 @@
 // Created by vincent on 14/04/17.
 //
 
+#include <tgmath.h>
 #include "Plazza.hpp"
 #include "OrderParser.hpp"
 
@@ -82,9 +83,9 @@ void 						Pza::Plazza::reception()
 	  this->dump(orders);
 	  for (const auto &i : orders)
 	    nbTask += i.first.size();
-	  while (nbTask / _nbrOfThreadPerProcess > _processes.size() || _processes.size() == 0)
+	  while (std::ceil((double)nbTask / _nbrOfThreadPerProcess) > _processes.size() || _processes.size() == 0)
 	    this->_processes.emplace_back(_nbrOfThreadPerProcess);
-	  std::cout << "Nbr of Process : " << _processes.size() << std::endl;
+	  std::cout << "Nb Task : " << nbTask << "Nbr of Process : " << _processes.size() << std::endl;
 	  for (const auto &it : orders)
 	    {
 	      j = 0;
@@ -92,6 +93,7 @@ void 						Pza::Plazza::reception()
 	      auto list_it = _processes.begin();
 	      while (j < it.first.size() &&  list_it != _processes.end())
 		{
+		  std::cout << "Adding Task : " << it.first[j] << std::endl;
 		  list_it->AddTask(it.first[j], it.second);
 		  process++;
 		  if (process == _nbrOfThreadPerProcess)
