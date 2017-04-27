@@ -5,6 +5,7 @@ CC	= g++
 RM	= rm -f
 
 SRCS	= main.cpp \
+	Gui.cpp \
 	Button.cpp
 
 OBJS	= $(SRCS:.cpp=.o)

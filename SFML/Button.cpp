@@ -17,7 +17,7 @@ Button::Button()
 
 }
 
-Button::Button(std::string s, sf::Font& font, sf::Vector2f position, sf::Uint32 style)
+Button::Button(std::string &s, sf::Font& font, sf::Vector2f position, sf::Uint32 style)
 {
   m_position = position;
   m_btnstate = state::normal;

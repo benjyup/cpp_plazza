@@ -39,7 +39,7 @@ class Button : public sf::Drawable
 {
  public:
   Button();
-  Button(std::string s, sf::Font& font, sf::Vector2f position, sf::Uint32 style);
+  Button(std::string& s, sf::Font& font, sf::Vector2f position, sf::Uint32 style);
 
   ~Button();
 
