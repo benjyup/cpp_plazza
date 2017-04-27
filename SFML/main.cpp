@@ -13,27 +13,23 @@
 
 int main()
 {
-  sf::RenderWindow window(sf::VideoMode(800,600,32), "Starfield Example", sf::Style::Default);
+  sf::RenderWindow window(sf::VideoMode(1600, 848,32), "Plazza", sf::Style::Default);
+  std::string strMail = "  Email\nAddress";
+  std::string strPhone = " Phone\nNumber";
+  std::string strIP = "     IP\nAddress";
+
+  sf::Texture texture;
+  if (!texture.loadFromFile("./gfx/background.png"))
+    std::cerr<<"Could not find background.png."<<std::endl;
+  sf::Sprite background(texture);
 
   sf::Font myfont;
   if(!myfont.loadFromFile("fonts/contb.ttf"))
-    {
-      std::cerr<<"Could not find contb.ttf font."<<std::endl;
-    }
+    std::cerr<<"Could not find contb.ttf font."<<std::endl;
 
-  gui::button yeah("Yeah!", myfont, sf::Vector2f(100.f,100.f), gui::style::save);
-  gui::button nope("Nope", myfont, sf::Vector2f(100.f, 200.f), gui::style::cancel);
-  gui::button nice("Nice...", myfont, sf::Vector2f(300.f, 100.f), gui::style::clean);
-  gui::button custom("Sweet", myfont, sf::Vector2f(300.f, 200.f), gui::style::none);
-  custom.setBorderThickness(2.f);
-  custom.setBorderRadius(20.f);
-  custom.setBorderColor(sf::Color(255,255,255,255));
-  custom.setColorNormal(sf::Color(200,0,200,255));
-  custom.setColorHover(sf::Color(255,0,255,100));
-  custom.setColorClicked(sf::Color(150,0,150,255));
-  custom.setColorTextNormal(sf::Color(255,255,255,255));
-  custom.setColorTextHover(sf::Color(255,255,0,255));
-  custom.setColorTextClicked(sf::Color(255,0,0,255));
+  Button myMail(strMail, myfont, sf::Vector2f(1435.f, 615.f), style::orange);
+  Button myNumberPhone(strPhone, myfont, sf::Vector2f(1435.f, 715.f), style::red);
+  Button myIP(strIP, myfont, sf::Vector2f(1435.f, 815.f), style::green);
 
   sf::Event e;
   bool running = true;
@@ -47,16 +43,15 @@ int main()
 	      return 0;
 	    }
 	}
-      yeah.update(e,window);
-      nope.update(e,window);
-      nice.update(e,window);
-      custom.update(e,window);
+      myMail.update(e,window);
+      myNumberPhone.update(e,window);
+      myIP.update(e,window);
 
       window.clear();
-      window.draw(yeah);
-      window.draw(nope);
-      window.draw(nice);
-      window.draw(custom);
+      window.draw(background);
+      window.draw(myMail);
+      window.draw(myNumberPhone);
+      window.draw(myIP);
       window.display();
     }
   return 0;
