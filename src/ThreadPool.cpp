@@ -34,8 +34,9 @@ void		test(Pza::ThreadPool *t)
       //auto couple = (t->getTask());
       //call function with the pair argument;
      // t->dec();
-      t->parser.parseFile(pair, -1, -1);
+      //t->parser.parseFile(pair, -1, -1);
       }
+      t->parser.parseFile(pair, -1, -1);
      // t->inc();
     }
 }

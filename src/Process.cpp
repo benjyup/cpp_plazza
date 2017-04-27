@@ -14,7 +14,6 @@ void		sigHandler(int)
 
 Pza::Process::Process(int nbrOfThread) :
 	_nbrOfThread(nbrOfThread),
-//	_threadPool(_nbrOfThread),
 	_pid(fork()),
 	_id(Pza::Process::ID),
 	_socketName(Pza::Process::SOCKET_NAME + std::to_string(Pza::Process::ID++))
@@ -22,17 +21,22 @@ Pza::Process::Process(int nbrOfThread) :
   signal(SIGUSR1, sigHandler);
   if (_pid < 0)
     throw Pza::PlazzaException("Error on forking: " + std::string(strerror(errno)));
+  if (_pid != 0)
+    pause();
   if (_pid == 0)
     {
       Pza::ThreadPool			threadPool(this->_nbrOfThread);
-      UnixSocket::Client		client(Pza::Plazza::SOCKET_NAME);
+      //UnixSocket::Client		client(Pza::Plazza::SOCKET_NAME);
       UnixSocket::Server		_server(this->_socketName, nbrOfThread);
       int 				clientSocket;
       unsigned long			size;
-      kill(getppid(), SIGUSR1);
 
+      sleep(1);
+      kill(getppid(), SIGUSR1);
+/*
       client.send("Bonjour je suis le Process[" + std::to_string(this->_id) + "]");
       std::cout << "Process créé" << std::endl;
+*/
       while (true)
 	{
 	  try
@@ -57,7 +61,6 @@ Pza::Process::Process(int nbrOfThread) :
 	  //close(clientSocket);
 	}
     }
-  pause();
 }
 
 /*

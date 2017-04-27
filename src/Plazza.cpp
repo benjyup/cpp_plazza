@@ -10,7 +10,7 @@ const std::string				Pza::Plazza::SOCKET_NAME = "./plazza_socket";
 
 void			clientReception(std::mutex &displayMutex,
 					    Pza::UnixSocket::Server &server,
-					    const int &clientSocket)
+					    const int clientSocket)
 {
   std::unique_lock<std::mutex> lock(displayMutex);
   std::string		msg = server.recept(clientSocket, 4096);
@@ -31,7 +31,7 @@ void				server(Pza::UnixSocket::Server *server, const bool *stop)
       std::cerr << "stop = " << *stop << std::endl;
       std::cerr << "Avant accept\n";
       clientSocket = server->getClientConection();
-      threads.emplace_back(clientReception, std::ref(displayMutex), std::ref(*server), std::ref(clientSocket));
+      threads.emplace_back(clientReception, std::ref(displayMutex), std::ref(*server), clientSocket);
     }
   for (auto &it : threads)
     it.join();
