@@ -88,15 +88,36 @@ Button::~Button()
 }
 
 void Button::setColorTextNormal(sf::Color text){m_textNormal = text;};
+
 void Button::setColorTextHover(sf::Color text){m_textHover = text;};
+
 void Button::setColorTextClicked(sf::Color text){m_textClicked = text;};
+
 void Button::setColorNormal(sf::Color bgNormal){m_bgNormal = bgNormal;};
+
 void Button::setColorHover(sf::Color bgHover){m_bgHover = bgHover;};
+
 void Button::setColorClicked(sf::Color bgClicked){m_bgClicked = bgClicked;};
+
 void Button::setBorderColor(sf::Color border){m_border = border;};
+
 void Button::setBorderThickness(float t){m_borderThickness = t;};
+
 void Button::setBorderRadius(float r){m_borderRadius = r;};
+
 void Button::setPosition(sf::Vector2f position){m_position = position;};
+
+void Button::setColorNormal(int r, int g, int b, int a)
+{
+  sf::Color	col(r, g, b, a);
+  m_bgNormal = col;
+};
+
+void Button::setColorHover(int r, int g, int b, int a)
+{
+  sf::Color	col(r, g, b, a);
+  m_bgHover = col;
+};
 
 void Button::setText(std::string s)
 {
@@ -168,7 +189,7 @@ void Button::setFont(sf::Font& font)
   m_shadow.setFont(font);
 }
 
-void Button::update(sf::Event& e, sf::RenderWindow& window)
+sf::Uint32 Button::update(sf::Event& e, sf::RenderWindow& window)
 {
   sf::Vector2i m_mousePosition = sf::Mouse::getPosition(window);
   bool mouseInButton =    m_mousePosition.x >= m_Button.getPosition().x - m_Button.getGlobalBounds().width/2
@@ -244,11 +265,12 @@ void Button::update(sf::Event& e, sf::RenderWindow& window)
       {
 	m_Button.setFillColor(m_bgClicked);
 	m_text.setColor(m_textClicked);
+	return (m_style);
       }
-      break;
     default:
       break;
     }
+  return (3);
 }
 
 void Button::draw(sf::RenderTarget& target,sf::RenderStates states) const

@@ -47,6 +47,8 @@ class Button : public sf::Drawable
   void setColorTextHover(sf::Color text);
   void setColorTextClicked(sf::Color text);
   void setColorNormal(sf::Color bgNormal);
+  void setColorNormal(int r, int g, int b, int a);
+  void setColorHover(int r, int g, int b, int a);
   void setColorHover(sf::Color bgHover);
   void setColorClicked(sf::Color bgClicked);
   void setBorderColor(sf::Color border);
@@ -62,7 +64,7 @@ class Button : public sf::Drawable
   sf::Vector2f getDimensions();
   sf::Uint32 getState();
 
-  void update(sf::Event& e, sf::RenderWindow& window);
+  sf::Uint32 update(sf::Event& e, sf::RenderWindow& window);
 
  private:
 
