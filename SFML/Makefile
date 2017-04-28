@@ -10,7 +10,7 @@ SRCS	= main.cpp \
 
 OBJS	= $(SRCS:.cpp=.o)
 
-CPPFLAGS += -W -Wall -Werror -Wextra -I./
+CPPFLAGS += -W -Wall -Werror -Wextra -I./ -std=c++11
 
 LDFLAGS  = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 

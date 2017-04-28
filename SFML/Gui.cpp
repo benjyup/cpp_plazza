@@ -21,9 +21,25 @@ Gui::Gui() : _window(sf::VideoMode(1600, 848,32), "Plazza", sf::Style::Default),
   sf::Sprite	background(_texture);
   _background = background;
   initButtons();
-  initText(_text, _textSh, 12, 494, "");
-  initText(_textFull, _textFullSh, 85, 530, "You don\'t have enough space...\n Press BackSpace to erase all.");
-  initText(_textPrompt, _textShPrompt, 12, 499, "|");
+  initText(_text, _textSh, 0, 494, "", 16);
+  initText(_textFull, _textFullSh, 10, 520, "You don\'t have enough space...\n Press BackSpace to erase all.", 16);
+  initText(_textPrompt, _textShPrompt, 0, 494, "|", 16);
+  initText(_infoGet, _infoShGet, 0, 35, "1\n"
+	  "2\n"
+	  "3\n"
+	  "0123456789 0123456790\n"
+	  "5\n"
+	  "6\n"
+	  "7\n"
+	  "8\n"
+	  "benjamin.peixoto@epitech.eu vincent.mesquita@epitech.eu\n"
+	  "10\n"
+	  "11\n"
+	  "255.255.255.255\n"
+	  "1.1.1.1\n"
+	  "100.100.100.100\n"
+	  "14\n"
+	  "15" , 12);
 }
 
 Gui::~Gui()
@@ -40,22 +56,20 @@ void	Gui::initButtons()
   _myIP = myIP;
 }
 
-void	Gui::initText(sf::Text &txt, sf::Text &shadow, int x, int y, std::string s)
+void	Gui::initText(sf::Text &txt, sf::Text &shadow, int x, int y, std::string s, int size)
 {
   sf::Color	col(255, 255, 255);
   sf::Color	col2(0, 0, 0);
 
   txt.setString(s);
   txt.setFont(_font);
-  txt.setCharacterSize(16);
-  txt.setOrigin(txt.getGlobalBounds().width/3, txt.getGlobalBounds().height/3);
+  txt.setCharacterSize(size);
   txt.setColor(col);
   sf::Vector2f textPosition = sf::Vector2f(x, y);
   txt.setPosition(textPosition);
   shadow.setFont(_font);
   shadow = txt;
   shadow.setColor(col2);
-  shadow.setOrigin(shadow.getGlobalBounds().width/3, shadow.getGlobalBounds().height/3);
   shadow.setPosition(txt.getPosition().x + 2.f, txt.getPosition().y + 2.f);
 }
 
@@ -95,72 +109,101 @@ void	Gui::selectedButton(sf::Event e)
     }
 }
 
+void	Gui::myBackSpace()
+{
+  if (_fileName.size() > 0)
+    _fileName.erase(_fileName.size() - 1);
+  _text.setString(_fileName);
+  _textSh.setString(_fileName);
+  _textf = false;
+  if (_fileName.back() == '.' || _fileName.back() == 'l' || _fileName.back() == 'i' ||
+      _fileName.back() == '/' ||
+      _fileName.back() == ';')
+    {
+      _textPrompt.setPosition(_textPrompt.getPosition().x - 4,
+			      _textPrompt.getPosition().y);
+      _textShPrompt.setPosition(_textShPrompt.getPosition().x - 4,
+				_textShPrompt.getPosition().y);
+    } else if (_fileName.size() != 0)
+      {
+	_textPrompt.setPosition(_textPrompt.getPosition().x - 9,
+				_textPrompt.getPosition().y);
+	_textShPrompt.setPosition(_textPrompt.getPosition().x + 2.f,
+				  _textPrompt.getPosition().y + 2.f);
+      }
+    else
+      {
+	_textPrompt.setPosition(0, _textPrompt.getPosition().y);
+	_textShPrompt.setPosition(0, _textPrompt.getPosition().y + 2.f);
+      }
+}
+
+void	Gui::userTextEntered(sf::Event e)
+{
+  if (e.text.unicode < 128 && e.text.unicode >= 32)
+    {
+      _fileName += static_cast<char>(e.text.unicode);
+      _text.setString(_fileName);
+      _textSh.setString(_fileName);
+      _textPrompt.setPosition(_text.getPosition().x + _text.getLocalBounds().width, _textPrompt.getPosition().y);
+      _textShPrompt.setPosition(_text.getPosition().x + _text.getLocalBounds().width, _textShPrompt.getPosition().y);
+    }
+}
+
+void	Gui::drawObjects(bool promptDraw)
+{
+  _window.clear();
+  _textSh.setString(_fileName);
+  _window.draw(_background);
+  _window.draw(_myMail);
+  _window.draw(_myNumberPhone);
+  _window.draw(_myIP);
+  _window.draw(_textSh);
+  _window.draw(_text);
+  _window.draw(_infoShGet);
+  _window.draw(_infoGet);
+  if (promptDraw)
+    {
+      _window.draw(_textShPrompt);
+      _window.draw(_textPrompt);
+    }
+  if (_textf)
+    {
+      _window.draw(_textFullSh);
+      _window.draw(_textFull);
+    }
+}
+
 void	Gui::refresh()
 {
   sf::Event	e;
   int		cl;
   sf::Music	music;
+  bool		running = true;
+  bool		promptDraw = false;
 
   if (!music.openFromFile("./music/music.ogg"))
     std::cerr<<"Could not find music.ogg font."<<std::endl;
   music.play();
-  bool	running = true;
-  bool	promptDraw = false;
   cl = 0;
   while(running)
     {
       while(_window.pollEvent(e))
 	{
 	  if(e.type == sf::Event::Closed)
-	    {
-	      _window.close();
-	      return ;
-	    }
+	    running = !running;
 	  if (_fileName.size() >= 33)
 	    _textf = true;
 	  else if (e.type == sf::Event::TextEntered)
-	      {
-		if (e.text.unicode < 128)
-		  {
-		    _fileName += static_cast<char>(e.text.unicode);
-		    _text.setString(_fileName);
-		    _textSh.setString(_fileName);
-		    _textPrompt.setPosition(_textPrompt.getPosition().x + 9, _textPrompt.getPosition().y);
-		    _textShPrompt.setPosition(_textShPrompt.getPosition().x + 9, _textShPrompt.getPosition().y);
-		  }
-	      }
+	      userTextEntered(e);
 	  if (e.type == sf::Event::KeyPressed)
-		{
-		  if (sf::Keyboard::isKeyPressed(sf::Keyboard::BackSpace))
-		    {
-		      _fileName = "";
-		      _text.setString(_fileName);
-		      _textSh.setString(_fileName);
-		      _textf = false;
-		      _textPrompt.setPosition(12, 499);
-		      _textShPrompt.setPosition(_textPrompt.getPosition().x + 2.f, _textPrompt.getPosition().y + 2.f);
-		    }
-		}
+	    {
+	      if (sf::Keyboard::isKeyPressed(sf::Keyboard::BackSpace) && _fileName.size() > 0)
+		myBackSpace();
+	    }
 	}
       selectedButton(e);
-      _window.clear();
-      _textSh.setString(_fileName);
-      _window.draw(_background);
-      _window.draw(_myMail);
-      _window.draw(_myNumberPhone);
-      _window.draw(_myIP);
-      _window.draw(_textSh);
-      _window.draw(_text);
-      if (promptDraw)
-	{
-	  _window.draw(_textShPrompt);
-	  _window.draw(_textPrompt);
-	}
-      if (_textf == true)
-	{
-	  _window.draw(_textFullSh);
-	  _window.draw(_textFull);
-	}
+      drawObjects(promptDraw);
       _window.display();
       if (cl++ == 200)
 	{
@@ -168,4 +211,5 @@ void	Gui::refresh()
 	  cl = 0;
 	}
     }
+  _window.close();
 }

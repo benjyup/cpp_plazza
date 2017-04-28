@@ -16,7 +16,10 @@ class Gui
   void	selectedButton(sf::Event);
   void	refresh();
   void	initButtons();
-  void	initText(sf::Text &, sf::Text &, int, int, std::string);
+  void	myBackSpace();
+  void	drawObjects(bool promptDraw);
+  void	userTextEntered(sf::Event e);
+  void	initText(sf::Text &, sf::Text &, int, int, std::string, int size);
 
  protected:
   sf::RenderWindow	_window;
@@ -38,6 +41,8 @@ class Gui
   sf::Text		_textSh;
   sf::Text		_textPrompt;
   sf::Text		_textShPrompt;
+  sf::Text		_infoGet;
+  sf::Text		_infoShGet;
   bool			_textf;
 };
 
