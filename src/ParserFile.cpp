@@ -44,7 +44,8 @@ bool			ParserFile::infoValid(std::string str, int info)
       }
 }
 
-void			ParserFile::stockMyInfo(std::string &line, std::pair<std::string, int> task) {
+void			ParserFile::stockMyInfo(std::string &line, std::pair<std::string, int> task,
+						    std::vector<std::string> &_info) {
   std::regex r;
   std::smatch smatch;
 
@@ -68,6 +69,7 @@ void			ParserFile::parseFile(std::pair<std::string, int> task, int posDep, int p
   std::ifstream			myfile(task.first);
   std::string			line;
   int				count = 0;
+  std::vector<std::string>	_info;
 
   std::cout << "Je rentre dans la fonction avec : filename = " << task.first << " info = " << task.second << std::endl;
   if(!myfile.is_open())
@@ -84,7 +86,7 @@ void			ParserFile::parseFile(std::pair<std::string, int> task, int posDep, int p
 	  if (count < posDep || count > posFin)
 	    continue;
 	  else
-	    stockMyInfo(line, task);
+	    stockMyInfo(line, task, _info);
 	}
     }
   else
@@ -92,19 +94,19 @@ void			ParserFile::parseFile(std::pair<std::string, int> task, int posDep, int p
       while (myfile.good())
 	{
 	  getline(myfile, line);
-	  stockMyInfo(line, task);
+	  stockMyInfo(line, task, _info);
 	}
     }
 
 // A RETIRER
   line.clear();
-  std::unique_lock<std::mutex>	lock(this->_sendMutex);
   Pza::UnixSocket::Client	client(Pza::Plazza::SOCKET_NAME);
   std::vector<std::string>::const_iterator i;
   for(i=_info.begin(); i!=_info.end(); ++i){
-      std::cout << "Je lis: " << *i << std::endl;
+//      std::cout << "Je lis: " << *i << std::endl;
       line = line + *i + "|\n";
     }
+  std::unique_lock<std::mutex>	lock(this->_sendMutex);
   client.send(line);
   _info.clear();
 }

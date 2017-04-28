@@ -16,7 +16,9 @@ void			clientReception(std::mutex &displayMutex,
   std::string		msg = server.recept(clientSocket, 4096);
 
   if (!(msg.empty()))
-  	std::cout << "Recept = " << msg << std::endl;
+    {
+      std::cout << "Recept = " << msg << std::endl;
+    }
 }
 
 void				server(Pza::UnixSocket::Server *server, const bool *stop)

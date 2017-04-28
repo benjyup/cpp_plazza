@@ -3,24 +3,14 @@
 //
 
 #include <iostream>
-#include <unistd.h>
 #include "ThreadPool.hpp"
-#include "ParserFile.hpp"
 
-void		my_func(std::pair<std::string, Information>)
+void		threadloop(Pza::ThreadPool *t)
 {
-  std::cout << "Je suis un thread" << std::endl;
-  std::cout << "Working ..." << std::endl;
-  sleep(5);
-  std::cout << "Done ..." << std::endl;
-}
+  std::mutex &mutex = t->getMutex();
+  std::pair<std::string, Information> pair;
 
-void		test(Pza::ThreadPool *t)
-{
-  std::mutex	&mutex = t->getMutex();
-  std::pair<std::string, Information>	pair;
-
-  std::cout << "New Thread"  << std::endl;
+//  std::cout << "New Thread" << std::endl;
   while (42)
     {
       {
@@ -30,23 +20,17 @@ void		test(Pza::ThreadPool *t)
 	if (t->getStatus())
 	  break;
 	pair = t->getTask();
-      std::cout << "COUCOU MDR" << std::endl;
-      //auto couple = (t->getTask());
-      //call function with the pair argument;
-     // t->dec();
-      //t->parser.parseFile(pair, -1, -1);
       }
       t->parser.parseFile(pair, -1, -1);
-     // t->inc();
     }
 }
 
 Pza::ThreadPool::ThreadPool(unsigned int nb)
 	:   _stop(false), _dispo(_workers.size())
 {
-  std::cout << "Création de la ThreadPool\n";
+//  std::cout << "Création de la ThreadPool\n";
   for(unsigned int i = 0; i < nb; ++i)
-    _workers.emplace_back(std::thread(test, this)); //check
+    _workers.emplace_back(std::thread(threadloop, this)); //check
 }
 
 Pza::ThreadPool::~ThreadPool()
