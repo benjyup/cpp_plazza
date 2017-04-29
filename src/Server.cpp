@@ -13,7 +13,6 @@ Pza::UnixSocket::Server::Server(const std::string &socketName, int simulateConne
   _servAddr(),
   _clientAddr()
 {
-
   //check simulateConnectionAlloweed and Port
   if ((this->_servSocket = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
     throw Pza::UnixSocket::ServerException("Error opening socket." + std::string(strerror(errno)));

@@ -31,7 +31,8 @@ namespace Pza
     void 						reception(void);
     void						processHandler(std::vector<std::pair<std::vector<
 								       std::string>, Information>> const &orders);
-
+    UnixSocket::Server					&getServer(void);
+    std::vector<std::string>				&getRes(void);
    private:
     Plazza(const Plazza &ths);
     Plazza &operator=(const Plazza &rhs);
@@ -42,6 +43,7 @@ namespace Pza
     bool 					_stopServer;
     unsigned int 				_activeThread;
     std::thread					_threadServer;
+    std::vector<std::string>			_result;
 
     void						dump(std::vector<std::pair<std::vector<std::string>,
 	    Information>>orders) const;

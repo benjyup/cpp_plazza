@@ -8,23 +8,36 @@
 
 const std::string				Pza::Plazza::SOCKET_NAME = "./plazza_socket";
 
-void			clientReception(std::mutex &displayMutex,
-					    Pza::UnixSocket::Server &server,
-					    const int clientSocket,
-					    unsigned int *activeThread)
+void			clientReception(Pza::Plazza &plazza,
+					std::mutex &displayMutex,
+					const int clientSocket,
+					unsigned int *activeThread)
 {
   std::unique_lock<std::mutex> lock(displayMutex);
-  std::string		msg = server.recept(clientSocket, 4096);
+  std::string		msg = plazza.getServer().recept(clientSocket, 4096);
 
   if (!(msg.empty()) && msg != "\n")
-  	std::cout << msg;
+    {
+      std::cout << msg;
+      plazza.getRes().push_back(msg);
+    }
   if (*activeThread != 0)
     *activeThread -= 1;
 }
 
-void				server(Pza::UnixSocket::Server *server,
-					   const bool *stop,
-					   unsigned int *activeThread)
+std::vector<std::string>&Pza::Plazza::getRes(void)
+{
+  return (_result);
+}
+
+Pza::UnixSocket::Server &Pza::Plazza::getServer(void)
+{
+  return (_server);
+}
+
+void				server(Pza::Plazza *plazza,
+				       const bool *stop,
+				       unsigned int *activeThread)
 {
   std::string			msg;
   int 				clientSocket;
@@ -33,10 +46,10 @@ void				server(Pza::UnixSocket::Server *server,
 
   while (!(*stop))
     {
-      clientSocket = server->getClientConection();
+      clientSocket = plazza->getServer().getClientConection();
       threads.emplace_back(clientReception,
+			   std::ref(*plazza),
 			   std::ref(displayMutex),
-			   std::ref(*server),
 			   clientSocket,
 			   activeThread);
     }
@@ -45,12 +58,12 @@ void				server(Pza::UnixSocket::Server *server,
 }
 
 Pza::Plazza::Plazza(int nbrOfThreadPerProcess) :
-	_nbrOfThreadPerProcess(nbrOfThreadPerProcess),
-	_processes(),
-	_server(Plazza::SOCKET_NAME, _nbrOfThreadPerProcess),
-	_stopServer(false),
-	_activeThread(0),
-	_threadServer(server, &this->_server, &_stopServer, &_activeThread)
+  _nbrOfThreadPerProcess(nbrOfThreadPerProcess),
+  _processes(),
+  _server(Plazza::SOCKET_NAME, _nbrOfThreadPerProcess),
+  _stopServer(false),
+  _activeThread(0),
+  _threadServer(server, this, &_stopServer, &_activeThread)
 {
   if (_nbrOfThreadPerProcess <= 0 || _nbrOfThreadPerProcess > 10)
     throw Pza::PlazzaException("The number of thread per process must be between 1 and 10");
@@ -67,7 +80,7 @@ Pza::Plazza::~Plazza()
 }
 
 void						Pza::Plazza::processHandler(std::vector<std::pair<std::vector<
-	std::string>, Information>> const &orders)
+									    std::string>, Information>> const &orders)
 {
   unsigned int nbTask = 0;
   unsigned int j;
@@ -75,9 +88,11 @@ void						Pza::Plazza::processHandler(std::vector<std::pair<std::vector<
 
   for (const auto &i : orders)
     nbTask += i.first.size();
-  while (std::ceil((double)nbTask / _nbrOfThreadPerProcess) > _processes.size() || _processes.size() == 0)
-    this->_processes.emplace_back(_nbrOfThreadPerProcess);
-  //std::cout << "Nb Task : " << nbTask << "Nbr of Process : " << _processes.size() << std::endl;
+  while (std::ceil((double)nbTask / (2 * _nbrOfThreadPerProcess)) > _processes.size() || _processes.size() == 0)
+    {
+      this->_processes.emplace_back(_nbrOfThreadPerProcess);
+      std::cout << "Fork\n";
+    }
   for (const auto &it : orders)
     {
       j = 0;
@@ -88,7 +103,7 @@ void						Pza::Plazza::processHandler(std::vector<std::pair<std::vector<
 	  this->_activeThread += 1;
 	  list_it->AddTask(it.first[j], it.second);
 	  process++;
-	  if (process == _nbrOfThreadPerProcess)
+	  if (process == 2 * _nbrOfThreadPerProcess)
 	    {
 	      list_it++;
 	      process = 0;
