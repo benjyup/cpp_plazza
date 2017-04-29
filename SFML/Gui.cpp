@@ -3,16 +3,17 @@
 //
 
 #include <iostream>
+#include <ostream>
 #include <string>
 #include <fstream>
 #include <algorithm>
 #include <iterator>
+#include <vector>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
 #include <SFML/System/Thread.hpp>
-#include <streambuf>
 #include "Gui.hpp"
 #include "Button.hpp"
 
@@ -31,22 +32,7 @@ Gui::Gui() : _window(sf::VideoMode(1600, 848,32), "Plazza", sf::Style::Default),
   initText(_text, _textSh, 0, 494, "", 16);
   initText(_textFull, _textFullSh, 10, 520, "You don\'t have enough space...\n Press BackSpace to erase all.", 16);
   initText(_textPrompt, _textShPrompt, 0, 494, "|", 16);
-  initText(_infoGet, _infoShGet, 0, 35, "1\n"
-	  "2\n"
-	  "3\n"
-	  "0123456789 0123456790\n"
-	  "5\n"
-	  "6\n"
-	  "7\n"
-	  "8\n"
-	  "benjamin.peixoto@epitech.eu vincent.mesquita@epitech.eu\n"
-	  "10\n"
-	  "11\n"
-	  "255.255.255.255\n"
-	  "1.1.1.1\n"
-	  "100.100.100.100\n"
-	  "14\n"
-	  "15" , 12);
+  initText(_infoGet, _infoShGet, 0, 35, "" , 12);
 }
 
 Gui::~Gui()
@@ -166,15 +152,29 @@ void	Gui::drawObjects(bool promptDraw)
 
 void	Gui::readResult()
 {
-  std::streambuf	*backup;
-  std::string		line;
+  sf::Time	time = sf::seconds(0.05);
+  std::string	fileInfo;
+  std::string	tmp;
+  std::ifstream myfile("test.txt");
+  int	i;
 
-  while (backup = std::cout.rdbuf())
+  i = 0;
+  while (myfile.good())
     {
-      std::ostream		out(backup);
-      out >> line;
-      std::cout << line << std::endl;;
+      if (i == 27)
+	{
+	  _pageInfo.push_back(fileInfo);
+	  fileInfo = "";
+	  i = 0;
+	}
+      sf::sleep(time);
+      getline(myfile, tmp);
+      fileInfo += tmp + '\n';
+      i++;
+      //_infoGet.setString(fileInfo);
+      //_infoShGet.setString(fileInfo);
     }
+  _pageInfo.push_back(fileInfo);
 }
 
 void	Gui::refresh()
@@ -184,9 +184,9 @@ void	Gui::refresh()
   sf::Music	music;
   bool		running = true;
   bool		promptDraw = false;
-  sf::Thread	th(&readResult);
+  //sf::Thread	th(&Gui::readResult, this);
 
-  th.launch();
+  //th.launch();
   if (!music.openFromFile("./music/music.ogg"))
     std::cerr<<"Could not find music.ogg font."<<std::endl;
   music.play();
@@ -205,6 +205,21 @@ void	Gui::refresh()
 	    {
 	      if (sf::Keyboard::isKeyPressed(sf::Keyboard::BackSpace) && _fileName.size() > 0)
 		myBackSpace();
+	      if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+		running = !running;
+	      if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
+		{
+		  //th.terminate();
+
+		  // Go to process
+
+		  //th.launch();
+		  //for (auto i = _pageInfo.begin(); i != _pageInfo.end(); ++i)
+		   // {
+		    //  _infoGet.setString(*i);
+		     // _infoShGet.setString(*i);
+		   // }
+		}
 	    }
 	}
       selectedButton(e);
@@ -215,6 +230,6 @@ void	Gui::refresh()
 	  cl = 0;
 	}
     }
-  th.terminate();
+  //th.terminate();
   _window.close();
 }

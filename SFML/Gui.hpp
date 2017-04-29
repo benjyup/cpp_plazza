@@ -45,6 +45,8 @@ class Gui
   sf::Text		_infoGet;
   sf::Text		_infoShGet;
   bool			_textf;
+
+  std::vector<std::string>	_pageInfo;
 };
 
 
