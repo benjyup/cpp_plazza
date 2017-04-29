@@ -41,7 +41,7 @@ Pza::Process::~Process(void)
   std::cout << "Pid = " << getpid() << " | [" << _id << "]" << "~Process" << std::endl;
   std::cout << getpid() << " " << _pid << std::endl;
   kill(this->_pid, SIGINT);
-  //(void)remove(this->_socketName.c_str());
+  (void)remove(this->_socketName.c_str());
 }
 
 void					Pza::Process::AddTask(std::string const &filename,

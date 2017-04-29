@@ -40,6 +40,7 @@ namespace Pza
     std::list<Pza::Process>			_processes;
     UnixSocket::Server				_server;
     bool 					_stopServer;
+    unsigned int 				_activeThread;
     std::thread					_threadServer;
 
     void						dump(std::vector<std::pair<std::vector<std::string>,

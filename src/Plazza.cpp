@@ -10,18 +10,20 @@ const std::string				Pza::Plazza::SOCKET_NAME = "./plazza_socket";
 
 void			clientReception(std::mutex &displayMutex,
 					    Pza::UnixSocket::Server &server,
-					    const int clientSocket)
+					    const int clientSocket,
+					    unsigned int *activeThread)
 {
   std::unique_lock<std::mutex> lock(displayMutex);
   std::string		msg = server.recept(clientSocket, 4096);
 
-  if (!(msg.empty()))
-    {
-      std::cout << msg;;
-    }
+  std::cout << msg;
+  if (*activeThread != 0)
+    *activeThread -= 1;
 }
 
-void				server(Pza::UnixSocket::Server *server, const bool *stop)
+void				server(Pza::UnixSocket::Server *server,
+					   const bool *stop,
+					   unsigned int *activeThread)
 {
   std::string			msg;
   int 				clientSocket;
@@ -31,7 +33,11 @@ void				server(Pza::UnixSocket::Server *server, const bool *stop)
   while (!(*stop))
     {
       clientSocket = server->getClientConection();
-      threads.emplace_back(clientReception, std::ref(displayMutex), std::ref(*server), clientSocket);
+      threads.emplace_back(clientReception,
+			   std::ref(displayMutex),
+			   std::ref(*server),
+			   clientSocket,
+			   activeThread);
     }
   for (auto &it : threads)
     it.join();
@@ -42,7 +48,8 @@ Pza::Plazza::Plazza(int nbrOfThreadPerProcess) :
 	_processes(),
 	_server(Plazza::SOCKET_NAME, _nbrOfThreadPerProcess),
 	_stopServer(false),
-	_threadServer(server, &this->_server, &_stopServer)
+	_activeThread(0),
+	_threadServer(server, &this->_server, &_stopServer, &_activeThread)
 {
   if (_nbrOfThreadPerProcess <= 0 || _nbrOfThreadPerProcess > 10)
     throw Pza::PlazzaException("The number of thread per process must be between 1 and 10");
@@ -51,15 +58,15 @@ Pza::Plazza::Plazza(int nbrOfThreadPerProcess) :
 Pza::Plazza::~Plazza()
 {
   UnixSocket::Client				_client(SOCKET_NAME);
-  //  std::cerr << "~Plazza " << SOCKET_NAME<< std::endl;
   this->_stopServer = true;
-  _client.send("stop");
+  _client.send("s");
   _threadServer.join();
+  while (this->_activeThread > 0);
   (void)remove(Pza::Plazza::SOCKET_NAME.c_str());
 }
 
 void						Pza::Plazza::processHandler(std::vector<std::pair<std::vector<
-									    std::string>, Information>> const &orders)
+	std::string>, Information>> const &orders)
 {
   unsigned int nbTask = 0;
   unsigned int j;
@@ -77,6 +84,7 @@ void						Pza::Plazza::processHandler(std::vector<std::pair<std::vector<
       auto list_it = _processes.begin();
       while (j < it.first.size() &&  list_it != _processes.end())
 	{
+	  this->_activeThread += 1;
 	  list_it->AddTask(it.first[j], it.second);
 	  process++;
 	  if (process == _nbrOfThreadPerProcess)
@@ -114,6 +122,7 @@ void 						Pza::Plazza::reception()
 	  orders.clear();
 	}
     }
+  while (this->_activeThread > 0);
 }
 
 void Pza::Plazza::dump(std::vector<std::pair<std::vector<std::string>,
