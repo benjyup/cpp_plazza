@@ -157,6 +157,14 @@ void	Gui::drawObjects(bool promptDraw)
   _window.display();
 }
 
+void	readResult(Gui &gui)
+{
+  std::string line;
+
+  while (std::getline(std::cout, line))
+    gui._fileName += line;
+}
+
 void	Gui::refresh()
 {
   sf::Event	e;
@@ -164,6 +172,7 @@ void	Gui::refresh()
   sf::Music	music;
   bool		running = true;
   bool		promptDraw = false;
+  std::thread	th(readResult, *this);
 
   if (!music.openFromFile("./music/music.ogg"))
     std::cerr<<"Could not find music.ogg font."<<std::endl;
@@ -178,7 +187,7 @@ void	Gui::refresh()
 	  if (_fileName.size() >= 36)
 	    _textf = true;
 	  else if (e.type == sf::Event::TextEntered)
-	      userTextEntered(e);
+	    userTextEntered(e);
 	  if (e.type == sf::Event::KeyPressed)
 	    {
 	      if (sf::Keyboard::isKeyPressed(sf::Keyboard::BackSpace) && _fileName.size() > 0)
