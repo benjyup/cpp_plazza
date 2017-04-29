@@ -98,11 +98,14 @@ void			ParserFile::parseFile(std::pair<std::string, int> task, int posDep, int p
     }
 
   line.clear();
-  Pza::UnixSocket::Client	client(Pza::Plazza::SOCKET_NAME);
   std::vector<std::string>::const_iterator i;
   for(i=_info.begin(); i!=_info.end(); ++i)
     line = line + *i + "\n";
-  std::unique_lock<std::mutex>	lock(this->_sendMutex);
-  client.send(line);
+  if (!(line.empty()))
+    {
+      Pza::UnixSocket::Client	client(Pza::Plazza::SOCKET_NAME);
+      std::unique_lock<std::mutex>	lock(this->_sendMutex);
+      client.send(line);
+    }
   _info.clear();
 }
