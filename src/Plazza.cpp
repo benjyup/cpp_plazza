@@ -4,7 +4,6 @@
 
 #include <tgmath.h>
 #include "Plazza.hpp"
-#include "OrderParser.hpp"
 
 const std::string				Pza::Plazza::SOCKET_NAME = "./plazza_socket";
 
@@ -113,31 +112,33 @@ void						Pza::Plazza::processHandler(std::vector<std::pair<std::vector<
     }
 }
 
+void						Pza::Plazza::loop(std::string & line, Pza::OrderParser &parser)
+{
+  std::vector<std::pair<std::vector<std::string>,
+			Information>> orders;
+
+  if (!(line.empty()))
+    {
+      parser.feed(line);
+      try
+	{
+	  parser.parse(orders);
+	} catch (const std::exception &e)
+	{
+	  std::cerr << "Error: " << e.what() << std::endl;
+	  return ;
+	}
+      processHandler(orders);
+    }
+}
+
 void 						Pza::Plazza::reception()
 {
   std::string line;
   Pza::OrderParser parser;
-  std::vector<std::pair<std::vector<std::string>,
-	  Information>> orders;
 
   while (std::getline(std::cin, line))
-    {
-      if (!(line.empty()))
-	{
-	  parser.feed(line);
-	  try
-	    {
-	      parser.parse(orders);
-	    } catch (const std::exception &e)
-	    {
-	      std::cerr << "Error: " << e.what() << std::endl;
-	      continue ;
-	    }
-	  //	  this->dump(orders);
-	  processHandler(orders);
-	  orders.clear();
-	}
-    }
+    loop(line, parser);
   while (this->_activeThread > 0);
 }
 

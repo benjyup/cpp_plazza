@@ -1,19 +1,37 @@
 //
-// main.cpp for main in /home/peixot_b/Epitech/TEST/SFML
-// 
-// Made by Benjamin
-// Login   <benjamin.peixoto@epitech.eu>
-// 
-// Started on  Mon Apr 24 17:30:12 2017 Benjamin
-// Last update Mon Apr 24 18:50:45 2017 Benjamin
+// Created by vincent on 14/04/17.
 //
 
-#include <SFML/Graphics.hpp>
-#include "Button.hpp"
+#include <iostream>
+#include "Plazza.hpp"
 #include "Gui.hpp"
 
-int main()
+int			usage(char *str)
 {
-  Gui	gui;
-  gui.refresh();
+  std::cerr << "Usage : " << str << " NbrOfThreadPerProcess" << std::endl;
+  return (EXIT_FAILURE);
+}
+
+int 			main(int ac, char **av)
+{
+  int 			nbrOfThreadPerProcess = 0;
+  Gui			gui;
+
+  if (ac != 2)
+    return (usage(av[0]));
+  try {
+    nbrOfThreadPerProcess = std::stoi(av[1]);
+  } catch (const std::invalid_argument e) {
+    std::cerr << "Error: NaN" << std::endl;
+    return (EXIT_FAILURE);
+  }
+
+  try {
+    Pza::Plazza plazza(nbrOfThreadPerProcess);
+    Gui		gui;
+    gui.refresh(plazza);
+  } catch (const std::exception &e) {
+    std::cerr << "Error: " << e.what() << std::endl;
+  }
+  return (EXIT_SUCCESS);
 }

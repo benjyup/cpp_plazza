@@ -14,6 +14,7 @@
 # include "Information.hpp"
 # include "Server.hpp"
 # include "Process.hpp"
+# include "OrderParser.hpp"
 
 namespace Pza
 {
@@ -31,6 +32,7 @@ namespace Pza
     void 						reception(void);
     void						processHandler(std::vector<std::pair<std::vector<
 								       std::string>, Information>> const &orders);
+    void						loop(std::string & line, OrderParser &parser);
     UnixSocket::Server					&getServer(void);
     std::vector<std::string>				&getRes(void);
    private:

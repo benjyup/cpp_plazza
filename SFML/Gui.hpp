@@ -5,6 +5,7 @@
 #ifndef CPP_PLAZZA_GUI_HPP
 #define CPP_PLAZZA_GUI_HPP
 
+#include "Plazza.hpp"
 #include "Button.hpp"
 
 class Gui
@@ -14,7 +15,7 @@ class Gui
   ~Gui();
 
   void	selectedButton(sf::Event);
-  void	refresh();
+  void	refresh(Pza::Plazza &plazza);
   void	initButtons();
   void	myBackSpace();
   void	readResult();

@@ -16,6 +16,7 @@
 #include <SFML/System/Thread.hpp>
 #include "Gui.hpp"
 #include "Button.hpp"
+#include "Plazza.hpp"
 
 Gui::Gui() : _window(sf::VideoMode(1600, 848,32), "Plazza", sf::Style::Default), _strMail("  Email\nAddress"), _strPhone(" Phone\nNumber"), _strIP("     IP\nAddress"),
 	     _info(0), _textf(false)
@@ -177,13 +178,14 @@ void	Gui::readResult()
   _pageInfo.push_back(fileInfo);
 }
 
-void	Gui::refresh()
+void	Gui::refresh(Pza::Plazza &plazza)
 {
   sf::Event	e;
   int		cl;
   sf::Music	music;
   bool		running = true;
   bool		promptDraw = false;
+  Pza::OrderParser parser;
   //sf::Thread	th(&Gui::readResult, this);
 
   //th.launch();
@@ -209,16 +211,17 @@ void	Gui::refresh()
 		running = !running;
 	      if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
 		{
+		  plazza.loop(_fileName, parser);
 		  //th.terminate();
 
 		  // Go to process
 
 		  //th.launch();
 		  //for (auto i = _pageInfo.begin(); i != _pageInfo.end(); ++i)
-		   // {
-		    //  _infoGet.setString(*i);
-		     // _infoShGet.setString(*i);
-		   // }
+		  // {
+		  //  _infoGet.setString(*i);
+		  // _infoShGet.setString(*i);
+		  // }
 		}
 	    }
 	}
