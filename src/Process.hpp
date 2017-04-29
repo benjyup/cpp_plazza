@@ -11,6 +11,7 @@
 # include <vector>
 # include <sys/types.h>
 # include <sys/wait.h>
+# include <cstring>
 # include "PlazzaException.hpp"
 # include "Information.hpp"
 # include "ThreadPool.hpp"
@@ -22,12 +23,16 @@ namespace Pza
   class Process
   {
    public:
+    static bool 		FATHER_IS_OK;
+
 //    Process(int _nbrOfThread, const std::vector<std::string> &filenames, Information information);
     Process(int _nbrOfThread);
     Process(const Process &);
     ~Process(void);
 
-    void AddTask(const std::string &filename, const Information &info);
+    void 			AddTask(const std::string &filename, const Information &info);
+    static void			sonSigHandler(int);
+    static void			cancelSIGUSER1(int);
     //int getDispo() const;
    private:
 
@@ -42,7 +47,8 @@ namespace Pza
 
     Process			&operator=(const Process &);
     template<typename T>
-    T       toNumber(const std::string &str);
+    T       			toNumber(const std::string &str);
+    void 			son(void);
   };
 }
 
