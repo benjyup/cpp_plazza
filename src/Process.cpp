@@ -38,9 +38,9 @@ Pza::Process::Process(const Pza::Process &other) :
 
 Pza::Process::~Process(void)
 {
-  std::cout << "Pid = " << getpid() << " | [" << _id << "]" << "~Process" << std::endl;
+  /*std::cout << "Pid = " << getpid() << " | [" << _id << "]" << "~Process" << std::endl;
   std::cout << getpid() << " " << _pid << std::endl;
-  kill(this->_pid, SIGINT);
+  kill(this->_pid, SIGINT);*/
   (void)remove(this->_socketName.c_str());
 }
 
