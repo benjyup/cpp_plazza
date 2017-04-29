@@ -59,20 +59,49 @@ Pza::Plazza::~Plazza()
   _threadServer.join();
 }
 
+void						Pza::Plazza::processHandler(std::vector<std::pair<std::vector<
+									    std::string>, Information>> const &orders)
+{
+  unsigned int nbTask = 0;
+  unsigned int j;
+  int		process = 0;
+
+  for (const auto &i : orders)
+    nbTask += i.first.size();
+  while (std::ceil((double)nbTask / _nbrOfThreadPerProcess) > _processes.size() || _processes.size() == 0)
+    this->_processes.emplace_back(_nbrOfThreadPerProcess);
+  std::cout << "Nb Task : " << nbTask << "Nbr of Process : " << _processes.size() << std::endl;
+  for (const auto &it : orders)
+    {
+      j = 0;
+      process = 0;
+      auto list_it = _processes.begin();
+      while (j < it.first.size() &&  list_it != _processes.end())
+	{
+	  std::cout << "Adding Task : " << it.first[j] << std::endl;
+	  list_it->AddTask(it.first[j], it.second);
+	  process++;
+	  if (process == _nbrOfThreadPerProcess)
+	    {
+	      list_it++;
+	      process = 0;
+	    }
+	  j++;
+	}
+    }
+}
+
 void 						Pza::Plazza::reception()
 {
   std::string line;
   Pza::OrderParser parser;
   std::vector<std::pair<std::vector<std::string>,
 	  Information>> orders;
-  unsigned int nbTask;
-  unsigned int j;
 
   while (std::getline(std::cin, line))
     {
       if (!(line.empty()))
 	{
-	  nbTask = 0;
 	  parser.feed(line);
 	  try
 	    {
@@ -82,30 +111,8 @@ void 						Pza::Plazza::reception()
 	      std::cerr << "Error: " << e.what() << std::endl;
 	      continue ;
 	    }
-	  this->dump(orders);
-	  for (const auto &i : orders)
-	    nbTask += i.first.size();
-	  while (std::ceil((double)nbTask / _nbrOfThreadPerProcess) > _processes.size() || _processes.size() == 0)
-	    this->_processes.emplace_back(_nbrOfThreadPerProcess);
-	  std::cout << "Nb Task : " << nbTask << "Nbr of Process : " << _processes.size() << std::endl;
-	  for (const auto &it : orders)
-	    {
-	      j = 0;
-	      int process = 0;
-	      auto list_it = _processes.begin();
-	      while (j < it.first.size() &&  list_it != _processes.end())
-		{
-		  std::cout << "Adding Task : " << it.first[j] << std::endl;
-		  list_it->AddTask(it.first[j], it.second);
-		  process++;
-		  if (process == _nbrOfThreadPerProcess)
-		    {
-		      list_it++;
-		      process = 0;
-		    }
-		  j++;
-		}
-	    }
+	  //	  this->dump(orders);
+	  processHandler(orders);
 	  orders.clear();
 	}
     }

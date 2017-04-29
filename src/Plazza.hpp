@@ -29,6 +29,8 @@ namespace Pza
     ~Plazza();
 
     void 						reception(void);
+    void						processHandler(std::vector<std::pair<std::vector<
+								       std::string>, Information>> const &orders);
 
    private:
     Plazza(const Plazza &ths);
