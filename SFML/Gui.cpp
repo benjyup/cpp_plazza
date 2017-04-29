@@ -170,11 +170,11 @@ void	Gui::readResult()
   std::streambuf	*buf;
   std::streambuf	*backup;
 
-  backup = std::cout.rdbuf();
-  std::ostream		out(backup);
-  out.write();
-  //while (std::cout.rdbuf(&buf))
-  //_fileName += line;
+  while (backup = std::cout.rdbuf())
+    {
+      std::ostream		out(backup);
+      out.write();
+    }
 }
 
 void	Gui::refresh()
