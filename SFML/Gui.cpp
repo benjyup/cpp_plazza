@@ -4,8 +4,15 @@
 
 #include <iostream>
 #include <string>
+#include <fstream>
+#include <algorithm>
+#include <iterator>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include <SFML/Window.hpp>
+#include <SFML/System.hpp>
+#include <SFML/System/Thread.hpp>
+#include <streambuf>
 #include "Gui.hpp"
 #include "Button.hpp"
 
@@ -157,12 +164,17 @@ void	Gui::drawObjects(bool promptDraw)
   _window.display();
 }
 
-void	readResult(Gui &gui)
+void	Gui::readResult()
 {
-  std::string line;
+  std::string 		line;
+  std::streambuf	*buf;
+  std::streambuf	*backup;
 
-  while (std::getline(std::cout, line))
-    gui._fileName += line;
+  backup = std::cout.rdbuf();
+  std::ostream		out(backup);
+  out.write();
+  //while (std::cout.rdbuf(&buf))
+  //_fileName += line;
 }
 
 void	Gui::refresh()
@@ -172,8 +184,9 @@ void	Gui::refresh()
   sf::Music	music;
   bool		running = true;
   bool		promptDraw = false;
-  std::thread	th(readResult, *this);
+  sf::Thread	th(&readResult);
 
+  th.launch();
   if (!music.openFromFile("./music/music.ogg"))
     std::cerr<<"Could not find music.ogg font."<<std::endl;
   music.play();
@@ -202,5 +215,6 @@ void	Gui::refresh()
 	  cl = 0;
 	}
     }
+  th.terminate();
   _window.close();
 }

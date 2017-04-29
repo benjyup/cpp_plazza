@@ -17,6 +17,7 @@ class Gui
   void	refresh();
   void	initButtons();
   void	myBackSpace();
+  void	readResult();
   void	drawObjects(bool promptDraw);
   void	userTextEntered(sf::Event e);
   void	initText(sf::Text &, sf::Text &, int, int, std::string, int size);
