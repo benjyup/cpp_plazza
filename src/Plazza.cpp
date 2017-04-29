@@ -16,7 +16,8 @@ void			clientReception(std::mutex &displayMutex,
   std::unique_lock<std::mutex> lock(displayMutex);
   std::string		msg = server.recept(clientSocket, 4096);
 
-  std::cout << msg;
+  if (!(msg.empty()) && msg != "\n")
+  	std::cout << msg;
   if (*activeThread != 0)
     *activeThread -= 1;
 }
@@ -59,7 +60,7 @@ Pza::Plazza::~Plazza()
 {
   UnixSocket::Client				_client(SOCKET_NAME);
   this->_stopServer = true;
-  _client.send("s");
+  _client.send("\n");
   _threadServer.join();
   while (this->_activeThread > 0);
   (void)remove(Pza::Plazza::SOCKET_NAME.c_str());

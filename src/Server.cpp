@@ -2,6 +2,7 @@
 // Created by vincent on 21/04/17.
 //
 
+#include <iostream>
 #include "Server.hpp"
 
 Pza::UnixSocket::Server::Server(const std::string &socketName, int simulateConnectionAllowed) :
