@@ -166,14 +166,14 @@ void	Gui::drawObjects(bool promptDraw)
 
 void	Gui::readResult()
 {
-  std::string 		line;
-  std::streambuf	*buf;
   std::streambuf	*backup;
+  std::string		line;
 
   while (backup = std::cout.rdbuf())
     {
       std::ostream		out(backup);
-      out.write();
+      out >> line;
+      std::cout << line << std::endl;;
     }
 }
 
