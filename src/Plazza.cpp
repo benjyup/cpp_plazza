@@ -17,7 +17,7 @@ void			clientReception(std::mutex &displayMutex,
 
   if (!(msg.empty()))
     {
-      std::cout << "Recept = " << msg << std::endl;
+      std::cout << msg;;
     }
 }
 
@@ -30,8 +30,6 @@ void				server(Pza::UnixSocket::Server *server, const bool *stop)
 
   while (!(*stop))
     {
-      std::cerr << "stop = " << *stop << std::endl;
-      std::cerr << "Avant accept\n";
       clientSocket = server->getClientConection();
       threads.emplace_back(clientReception, std::ref(displayMutex), std::ref(*server), clientSocket);
     }
@@ -53,7 +51,7 @@ Pza::Plazza::Plazza(int nbrOfThreadPerProcess) :
 Pza::Plazza::~Plazza()
 {
   UnixSocket::Client				_client(SOCKET_NAME);
-  std::cerr << "~Plazza " << SOCKET_NAME<< std::endl;
+  //  std::cerr << "~Plazza " << SOCKET_NAME<< std::endl;
   this->_stopServer = true;
   _client.send("stop");
   _threadServer.join();
@@ -70,7 +68,7 @@ void						Pza::Plazza::processHandler(std::vector<std::pair<std::vector<
     nbTask += i.first.size();
   while (std::ceil((double)nbTask / _nbrOfThreadPerProcess) > _processes.size() || _processes.size() == 0)
     this->_processes.emplace_back(_nbrOfThreadPerProcess);
-  std::cout << "Nb Task : " << nbTask << "Nbr of Process : " << _processes.size() << std::endl;
+  //std::cout << "Nb Task : " << nbTask << "Nbr of Process : " << _processes.size() << std::endl;
   for (const auto &it : orders)
     {
       j = 0;
@@ -78,7 +76,6 @@ void						Pza::Plazza::processHandler(std::vector<std::pair<std::vector<
       auto list_it = _processes.begin();
       while (j < it.first.size() &&  list_it != _processes.end())
 	{
-	  std::cout << "Adding Task : " << it.first[j] << std::endl;
 	  list_it->AddTask(it.first[j], it.second);
 	  process++;
 	  if (process == _nbrOfThreadPerProcess)

@@ -10,7 +10,6 @@ void		threadloop(Pza::ThreadPool *t)
   std::mutex &mutex = t->getMutex();
   std::pair<std::string, Information> pair;
 
-//  std::cout << "New Thread" << std::endl;
   while (42)
     {
       {
@@ -28,7 +27,6 @@ void		threadloop(Pza::ThreadPool *t)
 Pza::ThreadPool::ThreadPool(unsigned int nb)
 	:   _stop(false), _dispo(_workers.size())
 {
-//  std::cout << "Création de la ThreadPool\n";
   for(unsigned int i = 0; i < nb; ++i)
     _workers.emplace_back(std::thread(threadloop, this)); //check
 }
