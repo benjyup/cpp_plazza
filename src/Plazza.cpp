@@ -55,6 +55,7 @@ Pza::Plazza::~Plazza()
   this->_stopServer = true;
   _client.send("stop");
   _threadServer.join();
+  (void)remove(Pza::Plazza::SOCKET_NAME.c_str());
 }
 
 void						Pza::Plazza::processHandler(std::vector<std::pair<std::vector<
