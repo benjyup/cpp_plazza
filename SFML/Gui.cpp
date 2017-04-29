@@ -116,26 +116,8 @@ void	Gui::myBackSpace()
   _text.setString(_fileName);
   _textSh.setString(_fileName);
   _textf = false;
-  if (_fileName.back() == '.' || _fileName.back() == 'l' || _fileName.back() == 'i' ||
-      _fileName.back() == '/' ||
-      _fileName.back() == ';')
-    {
-      _textPrompt.setPosition(_textPrompt.getPosition().x - 4,
-			      _textPrompt.getPosition().y);
-      _textShPrompt.setPosition(_textShPrompt.getPosition().x - 4,
-				_textShPrompt.getPosition().y);
-    } else if (_fileName.size() != 0)
-      {
-	_textPrompt.setPosition(_textPrompt.getPosition().x - 9,
-				_textPrompt.getPosition().y);
-	_textShPrompt.setPosition(_textPrompt.getPosition().x + 2.f,
-				  _textPrompt.getPosition().y + 2.f);
-      }
-    else
-      {
-	_textPrompt.setPosition(0, _textPrompt.getPosition().y);
-	_textShPrompt.setPosition(0, _textPrompt.getPosition().y + 2.f);
-      }
+  _textPrompt.setPosition(_text.getPosition().x + _text.getLocalBounds().width, _textPrompt.getPosition().y);
+  _textShPrompt.setPosition(_text.getPosition().x + _text.getLocalBounds().width, _textShPrompt.getPosition().y);
 }
 
 void	Gui::userTextEntered(sf::Event e)
@@ -172,6 +154,7 @@ void	Gui::drawObjects(bool promptDraw)
       _window.draw(_textFullSh);
       _window.draw(_textFull);
     }
+  _window.display();
 }
 
 void	Gui::refresh()
@@ -192,7 +175,7 @@ void	Gui::refresh()
 	{
 	  if(e.type == sf::Event::Closed)
 	    running = !running;
-	  if (_fileName.size() >= 33)
+	  if (_fileName.size() >= 36)
 	    _textf = true;
 	  else if (e.type == sf::Event::TextEntered)
 	      userTextEntered(e);
@@ -204,7 +187,6 @@ void	Gui::refresh()
 	}
       selectedButton(e);
       drawObjects(promptDraw);
-      _window.display();
       if (cl++ == 200)
 	{
 	  promptDraw = !promptDraw;
