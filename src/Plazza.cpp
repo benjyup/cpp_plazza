@@ -70,8 +70,8 @@ Pza::Plazza::Plazza(int nbrOfThreadPerProcess) :
 
 Pza::Plazza::~Plazza()
 {
-  UnixSocket::Client				_client(SOCKET_NAME);
   this->_stopServer = true;
+  UnixSocket::Client				_client(SOCKET_NAME);
   _client.send("\n");
   _threadServer.join();
   while (this->_activeThread > 0);
