@@ -21,8 +21,10 @@ int 			main(int ac, char **av)
 
   try {
       nbrOfThreadPerProcess = std::stoi(av[1]);
+      if (nbrOfThreadPerProcess <= 0)
+	throw std::invalid_argument("Number of thread must be positive");
     } catch (const std::invalid_argument e) {
-      std::cerr << "Error: NaN" << std::endl;
+      std::cerr << "Error: invalid number of thread per process" << std::endl;
       return (EXIT_FAILURE);
     }
 
