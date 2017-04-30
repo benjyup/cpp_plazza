@@ -56,7 +56,7 @@ void	chrono(std::chrono::time_point<std::chrono::system_clock> &start, std::mute
 {
   int elapsed_seconds = 0;
 
-  while (elapsed_seconds < 1)
+  while (elapsed_seconds < 5)
     {
       {
       	std::unique_lock<std::mutex> lock(mutex);
