@@ -33,36 +33,8 @@ Gui::Gui() : _window(sf::VideoMode(1600, 848,32), "Plazza", sf::Style::Default),
   initText(_text, _textSh, 0, 494, "", 16);
   initText(_textFull, _textFullSh, 10, 520, "You don\'t have enough space...\n Press BackSpace to erase all.", 16);
   initText(_textPrompt, _textShPrompt, 0, 494, "|", 16);
-  initText(_infoGet, _infoShGet, 0, 35, "1\n"
-	  "2\n"
-	  "3\n"
-	  "0123456789 0123456790\n"
-	  "5\n"
-	  "6\n"
-	  "7\n"
-	  "8\n"
-	  "benjamin.peixoto@epitech.eu vincent.mesquita@epitech.eu\n"
-	  "10\n"
-	  "11\n"
-	  "255.255.255.255\n"
-	  "255.255.255.255\n"
-	  "255.255.255.255\n"
-	  "255.255.255.255\n"
-	  "255.255.255.255\n"
-	  "255.255.255.255\n"
-	  "255.255.255.255\n"
-	  "255.255.255.255\n"
-	  "255.255.255.255\n"
-	  "255.255.255.255\n"
-	  "255.255.255.255\n"
-	  "255.255.255.255\n"
-	  "255.255.255.255\n"
-	  "255.255.255.255\n"
-	  "255.255.255.255\n"
-	  "255.255.255.255\n"
-	  "255.255.255.255\n"
-	  "1.1.1.1\n"
-	  "100.100.100.100" , 12);
+  initText(_infoGet, _infoShGet, 0, 35, "" , 14);
+  initMusic();
 }
 
 Gui::~Gui()
@@ -74,12 +46,20 @@ void	Gui::initButtons()
   Button  	myMail(_strMail, _font, sf::Vector2f(1435.f, 615.f), style::orange);
   Button	myNumberPhone(_strPhone, _font, sf::Vector2f(1435.f, 715.f), style::red);
   Button	myIP(_strIP, _font, sf::Vector2f(1435.f, 815.f), style::green);
+
   _myMail = myMail;
   _myNumberPhone = myNumberPhone;
   _myIP = myIP;
+  _info = 2;
+  _myMail.setColorNormal(237, 127, 16, 255);
+  _myMail.setColorHover(237, 127, 16, 255);
+  _myNumberPhone.setColorNormal(217, 1, 21, 100);
+  _myNumberPhone.setColorHover(170, 1, 21, 100);
+  _myIP.setColorNormal(58, 180, 35, 100);
+  _myIP.setColorHover(58, 140, 35, 100);
 }
 
-void	Gui::initText(sf::Text &txt, sf::Text &shadow, int x, int y, std::string s, int size)
+void	Gui::initText(sf::Text &txt, sf::Text &shadow, int x, int y, const std::string &s, const int size)
 {
   sf::Color	col(255, 255, 255);
   sf::Color	col2(0, 0, 0);
@@ -92,6 +72,7 @@ void	Gui::initText(sf::Text &txt, sf::Text &shadow, int x, int y, std::string s,
   txt.setPosition(textPosition);
   shadow.setFont(_font);
   shadow = txt;
+  shadow.setCharacterSize(size);
   shadow.setColor(col2);
   shadow.setPosition(txt.getPosition().x + 2.f, txt.getPosition().y + 2.f);
 }
@@ -209,12 +190,10 @@ void	Gui::sendCommand(Pza::Plazza &plazza)
 
 void	Gui::affResult(Pza::Plazza &plazza)
 {
-  sf::Time      time = sf::seconds(0.1);
-  std::string   fileInfo;
-  std::string   tmp;
-  int   i;
-  int	j;
-  i = 0;
+  sf::Time time = sf::seconds(0.1);
+  std::string fileInfo;
+  std::string tmp;
+  int j;
 
   j = 0;
   fileInfo = "";
@@ -222,26 +201,32 @@ void	Gui::affResult(Pza::Plazza &plazza)
   _infoShGet.setString(fileInfo);
   sf::sleep(time);
   for (auto it = plazza.getRes().begin(); it != plazza.getRes().end(); ++it)
-    _pageInfo.push_back(*it);
-  for (auto it = plazza.getRes().begin(); it != plazza.getRes().end(); ++it)
     {
-      if (_infoGet.getLocalBounds().height > 100)
-	{
-	  _infoGet.setString(fileInfo);
-	  _infoShGet.setString(fileInfo);
-	  fileInfo = "";
-	  i = 0;
-	}
+      _pageInfo.push_back(*it);
       if (j >= _index)
 	{
 	  fileInfo += *it + '\n';
-	  i++;
 	  _index++;
 	}
       j++;
     }
   _infoGet.setString(fileInfo);
   _infoShGet.setString(fileInfo);
+  setSizeFont();
+}
+
+void	Gui::setSizeFont()
+{
+  int	size;
+
+  size = 14;
+  _infoGet.setCharacterSize(size);
+  _infoShGet.setCharacterSize(size);
+  while (_infoGet.getLocalBounds().height > 470)
+    {
+      _infoGet.setCharacterSize(--size);
+      _infoShGet.setCharacterSize(size);
+    }
 }
 
 void	Gui::pageLeft()
@@ -255,6 +240,7 @@ void	Gui::pageLeft()
 	  it -= _indexLeft;
 	  _infoGet.setString(*it);
 	  _infoShGet.setString(*it);
+	  setSizeFont();
 	}
     }
 }
@@ -270,22 +256,26 @@ void	Gui::pageRight()
 	  it -= _indexLeft;
 	  _infoGet.setString(*it);
 	  _infoShGet.setString(*it);
+	  setSizeFont();
 	}
     }
 }
+
+void	Gui::initMusic()
+{
+  if (!_music.openFromFile("./music/music.ogg"))
+    std::cerr<<"Could not find music.ogg font."<<std::endl;
+};
 
 void	Gui::refresh(Pza::Plazza &plazza)
 {
   sf::Event	e;
   int		cl;
-  sf::Music	music;
   bool		running = true;
   bool		promptDraw = false;
 
-  if (!music.openFromFile("./music/music.ogg"))
-    std::cerr<<"Could not find music.ogg font."<<std::endl;
-  music.play();
   cl = 0;
+  _music.play();
   while(running)
     {
       while(_window.pollEvent(e))
@@ -308,13 +298,9 @@ void	Gui::refresh(Pza::Plazza &plazza)
 		  affResult(plazza);
 		}
 	      if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-		{
-		  pageLeft();
-		}
+		pageLeft();
 	      if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-		{
-		  pageRight();
-		}
+		pageRight();
 	    }
 	}
       selectedButton(e);
