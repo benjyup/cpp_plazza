@@ -1,6 +1,10 @@
-NAME	= test
+NAME	= plazza
 
 CC	= g++
+
+CP	= cp
+
+RACINE	= ../
 
 RM	= rm -f
 
@@ -30,7 +34,7 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 	 $(CC) $(OBJS) -o $(NAME) $(LDFLAGS)
-
+	 $(CP) $(NAME) $(RACINE)
 clean:
 	$(RM) $(OBJS)
 
