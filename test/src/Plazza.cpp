@@ -70,6 +70,7 @@ Pza::Plazza::Plazza(int nbrOfThreadPerProcess) :
 
 Pza::Plazza::~Plazza()
 {
+  std::cout << "~Plazza" << std::endl;
   this->_stopServer = true;
   UnixSocket::Client				_client(SOCKET_NAME);
   _client.send("\n");

@@ -15,19 +15,21 @@ Pza::Process::Process(int nbrOfThread) :
   _id(Pza::Process::ID),
   _socketName(Pza::Process::SOCKET_NAME + std::to_string(Pza::Process::ID++))
 {
+  struct sigaction act, old;
+  sigaction(SIGUSR2, NULL, &old);
+  memset(&act, 0, sizeof(act));
+  act.sa_sigaction = &Pza::Process::cancelSIGUSER2;
+  //  sigemptyset(&(act.sa_mask));
+  act.sa_flags = SA_RESTART;
+  act.sa_flags |= SA_SIGINFO;
+  sigaction(SIGUSR2, &act, &old);
+  //  sigemptyset(&act.sa_mask);
   if (signal(SIGUSR1, this->cancelSIGUSER1) == SIG_ERR)
     throw Pza::PlazzaException("signal: " + std::string(strerror(errno)));
   if (_pid < 0)
     throw Pza::PlazzaException("fork: " + std::string(strerror(errno)));
   if (_pid != 0)
     {
-      struct sigaction act;
-      act.sa_handler = &Pza::Process::cancelSIGUSER1;
-      act.sa_sigaction = &Pza::Process::cancelSIGUSER2;
-      sigemptyset(&act.sa_mask);
-      sigaddset(&act.sa_mask, SIGUSR2);
-      act.sa_flags = 0;
-      sigaction(SIGUSR2, &act, NULL);
       pause();
       if (kill(this->_pid, SIGUSR1) == -1)
 	throw Pza::PlazzaException("kill: " + std::string(strerror(errno)));
@@ -95,7 +97,7 @@ void 					Pza::Process::son(void)
   int 					clientSocket;
   unsigned long				size;
 
-  if (signal(SIGUSR1, this->sonSigHandler) == SIG_ERR || signal(SIGUSR2, this->sonSigHandler2) == SIG_ERR)
+  if (signal(SIGUSR1, this->sonSigHandler) == SIG_ERR)// || signal(SIGUSR2, this->sonSigHandler2) == SIG_ERR)
     throw Pza::PlazzaException("signal: " + std::string(strerror(errno)));
   while (!(this->FATHER_IS_OK))
     {
@@ -109,6 +111,10 @@ void 					Pza::Process::son(void)
     {
       try
 	{
+	  {
+	    std::unique_lock<std::mutex> lock(_timeMutex);
+	    _start = std::chrono::system_clock::now();
+	  }
 	  clientSocket = _server.getClientConection();
 	  //std::cout << "client connecté" << std::endl;
 
@@ -123,10 +129,6 @@ void 					Pza::Process::son(void)
 	  //std::cout << "Process[" << this->_id << "] J'ai reçu cette commande: " << order<< std::endl;
 
 	  threadPool.addTask(order.substr(0, size), TO_INFORMATION.at( this->toNumber<int>(std::string(1, order[size]))));
-	  {
-	    std::unique_lock<std::mutex> lock(_timeMutex);
-	    _start = std::chrono::system_clock::now();
-	  }
 	} catch (const std::exception &e) {
 	std::cerr << "Process[" << _id << "] error: " << e.what() << std::endl;
       }
@@ -153,13 +155,17 @@ void 					Pza::Process::sonSigHandler2(int)
   std::cout << "Sighandler 2\n";
   std::cout << getpid() << std::endl;
   Pza::Process::AFK = true;
-  exit(1);
+  //  exit(1);
   // (void)remove(this->_socketName.c_str());
 }
 
 void					Pza::Process::cancelSIGUSER2(int, siginfo_t *info, void *context)
 {
-  std::cout << "Cancel\n";
+  std::cout << "Cancel" << std::endl;
+  if (info->si_signo == SIGUSR2)
+    std::cout << "fdp\n";
+  std::cout << "pid son : " << info->si_pid << " pid father : " << getpid() <<  std::endl;
+  kill(info->si_pid, SIGINT);
   /* Cancel SIGUSER1 behavior (SIGINT) */
 }
 
