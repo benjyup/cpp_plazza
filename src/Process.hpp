@@ -24,7 +24,6 @@ namespace Pza
   {
    public:
     static bool 		FATHER_IS_OK;
-    static bool			AFK;
 
 //    Process(int _nbrOfThread, const std::vector<std::string> &filenames, Information information);
     Process(int _nbrOfThread);
@@ -32,10 +31,7 @@ namespace Pza
     ~Process(void);
 
     void 			AddTask(const std::string &filename, const Information &info);
-    std::mutex			&getMutex(void);
-    std::chrono::time_point<std::chrono::system_clock> &getTime(void);
     static void			sonSigHandler(int);
-    static void			sonSigHandler2(int);
     static void			cancelSIGUSER1(int);
     //int getDispo() const;
    private:
@@ -48,8 +44,7 @@ namespace Pza
     pid_t 			_pid;
     unsigned int		_id;
     std::string			_socketName;
-    std::chrono::time_point<std::chrono::system_clock> _start;
-    std::mutex						_timeMutex;
+
     Process			&operator=(const Process &);
     template<typename T>
     T       			toNumber(const std::string &str);

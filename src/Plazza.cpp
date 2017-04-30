@@ -125,7 +125,7 @@ void						Pza::Plazza::loop(std::string & line, Pza::OrderParser &parser)
 	  parser.parse(orders);
 	} catch (const std::exception &e)
 	{
-	  //std::cerr << "Error: " << e.what() << std::endl;
+	  std::cerr << "Error: " << e.what() << std::endl;
 	  return ;
 	}
       processHandler(orders);
