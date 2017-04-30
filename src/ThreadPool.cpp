@@ -24,7 +24,7 @@ void		threadloop(Pza::ThreadPool *t)
     }
 }
 
-Pza::ThreadPool::ThreadPool(unsigned int nb)
+Pza::ThreadPool::ThreadPool(const unsigned int nb)
 	:   _stop(false), _dispo(_workers.size())
 {
   for(unsigned int i = 0; i < nb; ++i)

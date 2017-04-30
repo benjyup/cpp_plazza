@@ -33,7 +33,7 @@ namespace Pza
   class ThreadPool
   {
    public:
-    ThreadPool(unsigned int);
+    ThreadPool(const unsigned int);
     ~ThreadPool();
 
     void addTask(std::string const &, Information const &);
