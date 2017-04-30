@@ -34,6 +34,7 @@ Gui::Gui() : _window(sf::VideoMode(1600, 848,32), "Plazza", sf::Style::Default),
   initText(_textFull, _textFullSh, 10, 520, "You don\'t have enough space...\n Press BackSpace to erase all.", 16);
   initText(_textPrompt, _textShPrompt, 0, 494, "|", 16);
   initText(_infoGet, _infoShGet, 0, 35, "" , 14);
+  initMusic();
 }
 
 Gui::~Gui()
@@ -45,6 +46,7 @@ void	Gui::initButtons()
   Button  	myMail(_strMail, _font, sf::Vector2f(1435.f, 615.f), style::orange);
   Button	myNumberPhone(_strPhone, _font, sf::Vector2f(1435.f, 715.f), style::red);
   Button	myIP(_strIP, _font, sf::Vector2f(1435.f, 815.f), style::green);
+
   _myMail = myMail;
   _myNumberPhone = myNumberPhone;
   _myIP = myIP;
@@ -57,7 +59,7 @@ void	Gui::initButtons()
   _myIP.setColorHover(58, 140, 35, 100);
 }
 
-void	Gui::initText(sf::Text &txt, sf::Text &shadow, int x, int y, std::string s, int size)
+void	Gui::initText(sf::Text &txt, sf::Text &shadow, int x, int y, const std::string &s, const int size)
 {
   sf::Color	col(255, 255, 255);
   sf::Color	col2(0, 0, 0);
@@ -192,24 +194,15 @@ void	Gui::affResult(Pza::Plazza &plazza)
   std::string fileInfo;
   std::string tmp;
   int j;
-  int size;
 
   j = 0;
-  size = 14;
   fileInfo = "";
   _infoGet.setString(fileInfo);
   _infoShGet.setString(fileInfo);
   sf::sleep(time);
   for (auto it = plazza.getRes().begin(); it != plazza.getRes().end(); ++it)
-    _pageInfo.push_back(*it);
-  for (auto it = plazza.getRes().begin(); it != plazza.getRes().end(); ++it)
     {
-      if (_infoGet.getLocalBounds().height > 10)
-	{
-	  _infoGet.setString(fileInfo);
-	  _infoShGet.setString(fileInfo);
-	  fileInfo = "";
-	}
+      _pageInfo.push_back(*it);
       if (j >= _index)
 	{
 	  fileInfo += *it + '\n';
@@ -219,7 +212,17 @@ void	Gui::affResult(Pza::Plazza &plazza)
     }
   _infoGet.setString(fileInfo);
   _infoShGet.setString(fileInfo);
-  while (_infoGet.getLocalBounds().height > 480)
+  setSizeFont();
+}
+
+void	Gui::setSizeFont()
+{
+  int	size;
+
+  size = 14;
+  _infoGet.setCharacterSize(size);
+  _infoShGet.setCharacterSize(size);
+  while (_infoGet.getLocalBounds().height > 470)
     {
       _infoGet.setCharacterSize(--size);
       _infoShGet.setCharacterSize(size);
@@ -237,6 +240,7 @@ void	Gui::pageLeft()
 	  it -= _indexLeft;
 	  _infoGet.setString(*it);
 	  _infoShGet.setString(*it);
+	  setSizeFont();
 	}
     }
 }
@@ -252,22 +256,26 @@ void	Gui::pageRight()
 	  it -= _indexLeft;
 	  _infoGet.setString(*it);
 	  _infoShGet.setString(*it);
+	  setSizeFont();
 	}
     }
 }
+
+void	Gui::initMusic()
+{
+  if (!_music.openFromFile("./music/music.ogg"))
+    std::cerr<<"Could not find music.ogg font."<<std::endl;
+};
 
 void	Gui::refresh(Pza::Plazza &plazza)
 {
   sf::Event	e;
   int		cl;
-  sf::Music	music;
   bool		running = true;
   bool		promptDraw = false;
 
-  if (!music.openFromFile("./music/music.ogg"))
-    std::cerr<<"Could not find music.ogg font."<<std::endl;
-  music.play();
   cl = 0;
+  _music.play();
   while(running)
     {
       while(_window.pollEvent(e))
