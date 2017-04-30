@@ -50,11 +50,13 @@ void					Pza::Process::AddTask(std::string const &filename,
   try {
       //std::cout << "adding task | " << _socketName << std::endl;
       UnixSocket::Client		client(this->_socketName);
+/*
       client.send(std::to_string(filename.size()));
       client.getNotification(2);
+*/
       //std::cout << "Notification = " << client.getNotification(2) << std::endl;
       client.send(filename + std::to_string(info));
-      client.getNotification(2);
+      //client.getNotification(2);
     } catch (const std::exception &e) {
       std::cerr << "WArning: Not able to send task: " << e.what() << std::endl;
     }
@@ -82,17 +84,18 @@ void 					Pza::Process::son(void)
 	  clientSocket = _server.getClientConection();
 	  //std::cout << "client connecté" << std::endl;
 
-	  std::string order(_server.recept(clientSocket, 5));
+	  //std::string order(_server.recept(clientSocket, 5));
 	  //std::cout << "Process[" << this->_id << "] J'ai reçu cette commande: " << order << std::endl;
-	  _server.notify("OK");
+	  //_server.notify("OK");
 
-	  size = toNumber<unsigned long>(order);
+	  size = 4096;
 
-	  order = (_server.recept(clientSocket, size + 1));
-	  _server.notify("OK");
+	  std::string order = (_server.recept(clientSocket, size));
+	  //_server.notify("OK");
 	  //std::cout << "Process[" << this->_id << "] J'ai reçu cette commande: " << order<< std::endl;
 
-	  threadPool.addTask(order.substr(0, size), TO_INFORMATION.at( this->toNumber<int>(std::string(1, order[size]))));
+	  threadPool.addTask(order.substr(0, order.size() - 1),
+			     TO_INFORMATION.at( this->toNumber<int>(std::string(1, order[order.size() - 1]))));
 	} catch (const std::exception &e) {
 	  std::cerr << "Process[" << _id << "] error: " << e.what() << std::endl;
 	}

@@ -74,13 +74,26 @@ int Pza::UnixSocket::Server::getClientConection(void)
 std::string Pza::UnixSocket::Server::recept(const int clientSocket, const size_t buffLength)
 {
   std::string				mesage;
-  ssize_t 				end;
+  ssize_t 				bytes_read;
+  std::string				str;
 
   this->_clientSocket = clientSocket;
-  char					buff[buffLength];
+  char					buff[buffLength + 1];
 
   bzero(buff, buffLength);
+  do {
+      //std::cout << "recv" << std::endl;
+      bytes_read = recv(clientSocket, buff, buffLength, 0);
+      buff[bytes_read] = '\0';
+      //std::cout << "bytes_read = " << bytes_read << " c = " << buff << std::endl;
+      if (bytes_read > 0) {
+	  str += buff;
+	}
+    } while (bytes_read > 0);
+  //std::cout << "str = " << str << std::endl;
+/*
   if ((end = ::read(this->_clientSocket, buff, buffLength)) < 0)
     throw Pza::UnixSocket::ServerException("Error on reading socket: " + std::string(strerror(errno)));
-  return (std::string(buff, end));
+*/
+  return (str);
 }

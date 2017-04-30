@@ -71,8 +71,10 @@ Pza::Plazza::Plazza(int nbrOfThreadPerProcess) :
 Pza::Plazza::~Plazza()
 {
   this->_stopServer = true;
-  UnixSocket::Client				_client(SOCKET_NAME);
-  _client.send("\n");
+  {
+    UnixSocket::Client				_client(SOCKET_NAME);
+    _client.send("\n");
+  }
   _threadServer.join();
   while (this->_activeThread > 0);
   (void)remove(Pza::Plazza::SOCKET_NAME.c_str());
