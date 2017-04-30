@@ -22,6 +22,10 @@ class Gui
   void	drawObjects(bool promptDraw);
   void	userTextEntered(sf::Event e);
   void	initText(sf::Text &, sf::Text &, int, int, std::string, int size);
+  void	sendCommand(Pza::Plazza &plazza);
+  void	affResult(Pza::Plazza &plazza);
+  void	pageLeft();
+  void	pageRight();
 
  protected:
   sf::RenderWindow	_window;
@@ -36,6 +40,8 @@ class Gui
   Button		_myNumberPhone;
   Button		_myIP;
   sf::Uint32 		_info;
+  int	 		_index;
+  int			_indexLeft;
   std::string		_fileName;
   sf::Text		_textFull;
   sf::Text		_textFullSh;

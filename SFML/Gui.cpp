@@ -19,7 +19,7 @@
 #include "Plazza.hpp"
 
 Gui::Gui() : _window(sf::VideoMode(1600, 848,32), "Plazza", sf::Style::Default), _strMail("  Email\nAddress"), _strPhone(" Phone\nNumber"), _strIP("     IP\nAddress"),
-	     _info(0), _textf(false)
+	     _info(0), _index(0), _indexLeft(1), _textf(false)
 {
   sf::Font myfont;
   if(!myfont.loadFromFile("fonts/contb.ttf"))
@@ -151,31 +151,98 @@ void	Gui::drawObjects(bool promptDraw)
   _window.display();
 }
 
-void	Gui::readResult()
+void	Gui::sendCommand(Pza::Plazza &plazza)
 {
-  sf::Time	time = sf::seconds(0.05);
-  std::string	fileInfo;
-  std::string	tmp;
-  std::ifstream myfile("test.txt");
-  int	i;
+  Pza::OrderParser parser;
 
+  switch (_info)
+    {
+      case 2:
+	_fileName += " EMAIL_ADDRESS";
+      break;
+      case 0:
+	_fileName += " PHONE_NUMBER";
+      break;
+      case 1:
+	_fileName += " IP_ADDRESS";
+      break;
+      default:
+	break;
+    }
+  plazza.loop(_fileName, parser);
+  _fileName = "";
+  _text.setString(_fileName);
+  _textSh.setString(_fileName);
+  _textPrompt.setPosition(_text.getPosition().x + _text.getLocalBounds().width, _textPrompt.getPosition().y);
+  _textShPrompt.setPosition(_text.getPosition().x + _text.getLocalBounds().width, _textShPrompt.getPosition().y);
+  plazza.getRes();
+}
+
+void	Gui::affResult(Pza::Plazza &plazza)
+{
+  sf::Time      time = sf::seconds(0.1);
+  std::string   fileInfo;
+  std::string   tmp;
+  int   i;
+  int	j;
   i = 0;
-  while (myfile.good())
+
+  j = 0;
+  fileInfo = "";
+  _infoGet.setString(fileInfo);
+  _infoShGet.setString(fileInfo);
+  sf::sleep(time);
+  for (auto it = plazza.getRes().begin(); it != plazza.getRes().end(); ++it)
+    _pageInfo.push_back(*it);
+  for (auto it = plazza.getRes().begin(); it != plazza.getRes().end(); ++it)
     {
       if (i == 27)
 	{
-	  _pageInfo.push_back(fileInfo);
+	  _infoGet.setString(fileInfo);
+	  _infoShGet.setString(fileInfo);
 	  fileInfo = "";
 	  i = 0;
 	}
-      sf::sleep(time);
-      getline(myfile, tmp);
-      fileInfo += tmp + '\n';
-      i++;
-      //_infoGet.setString(fileInfo);
-      //_infoShGet.setString(fileInfo);
+      if (j >= _index)
+	{
+	  fileInfo += *it + '\n';
+	  i++;
+	  _index++;
+	}
+      j++;
     }
-  _pageInfo.push_back(fileInfo);
+  _infoGet.setString(fileInfo);
+  _infoShGet.setString(fileInfo);
+}
+
+void	Gui::pageLeft()
+{
+  if (!_pageInfo.empty())
+    {
+      auto it = _pageInfo.end();
+      if (it - 1 != _pageInfo.begin() && _indexLeft < _index)
+	{
+	  _indexLeft++;
+	  it -= _indexLeft;
+	  _infoGet.setString(*it);
+	  _infoShGet.setString(*it);
+	}
+    }
+}
+
+void	Gui::pageRight()
+{
+  if (!_pageInfo.empty())
+    {
+      auto it = _pageInfo.end();
+      if (it - 1 != _pageInfo.begin() && _indexLeft > 1)
+	{
+	  _indexLeft--;
+	  it -= _indexLeft;
+	  _infoGet.setString(*it);
+	  _infoShGet.setString(*it);
+	}
+    }
 }
 
 void	Gui::refresh(Pza::Plazza &plazza)
@@ -185,10 +252,7 @@ void	Gui::refresh(Pza::Plazza &plazza)
   sf::Music	music;
   bool		running = true;
   bool		promptDraw = false;
-  Pza::OrderParser parser;
-  //sf::Thread	th(&Gui::readResult, this);
 
-  //th.launch();
   if (!music.openFromFile("./music/music.ogg"))
     std::cerr<<"Could not find music.ogg font."<<std::endl;
   music.play();
@@ -211,17 +275,18 @@ void	Gui::refresh(Pza::Plazza &plazza)
 		running = !running;
 	      if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
 		{
-		  plazza.loop(_fileName, parser);
-		  //th.terminate();
-
-		  // Go to process
-
-		  //th.launch();
+		  sendCommand(plazza);
+		  affResult(plazza);
 		  //for (auto i = _pageInfo.begin(); i != _pageInfo.end(); ++i)
-		  // {
-		  //  _infoGet.setString(*i);
-		  // _infoShGet.setString(*i);
-		  // }
+		  //std::cout << *i << std::endl;
+		}
+	      if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+		{
+		  pageLeft();
+		}
+	      if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+		{
+		  pageRight();
 		}
 	    }
 	}
@@ -233,6 +298,5 @@ void	Gui::refresh(Pza::Plazza &plazza)
 	  cl = 0;
 	}
     }
-  //th.terminate();
   _window.close();
 }
