@@ -16,10 +16,12 @@ class ParserFile
   ParserFile();
   ~ParserFile();
 
-  bool			infoValid(const std::string &str, Information info);
-  void			stockMyInfo(std::string &line, std::pair<std::string, Information > task,
-					  std::vector<std::string> &);
-  void			parseFile(std::pair<std::string, Information > task, int posDep, int posFin);
+  bool			infoValid(const std::string &str, const Information info) const;
+  void			stockMyInfo(std::string &line, const std::pair<std::string, Information > &task,
+					  std::vector<std::string> &) const;
+  void			parseFile(const std::pair<std::string, Information > &task,
+					const int posDep = -1,
+					const int posFin = -1);
 
  protected:
   std::mutex			_sendMutex;

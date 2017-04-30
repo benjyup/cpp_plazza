@@ -22,38 +22,28 @@ ParserFile::~ParserFile()
 {
 }
 
-bool			ParserFile::infoValid(const std::string &str, Information info)
+bool			ParserFile::infoValid(const std::string &str,
+						  const Information info) const
 {
   if (info == 0)
-    {
-      if (str.size() < 10)
-	return (false);
-      return (true);
-    }
+    return str.size() >= 10;
   else if (info == 1)
-      {
-	if (str.find("@") == std::string::npos)
-	  return (false);
-	return (true);
-      }
+      return str.find("@") != std::string::npos;
     else
-      {
-	if (std::count_if(str.begin(), str.end(), std::bind1st(std::equal_to<char>(),'.')) != 3)
-	  return (false);
-	return (true);
-      }
+      return std::count_if(str.begin(), str.end(), std::bind1st(std::equal_to<char>(), '.')) == 3;
 }
 
-void			ParserFile::stockMyInfo(std::string &line, std::pair<std::string, Information > task,
-						    std::vector<std::string> &_info) {
+void			ParserFile::stockMyInfo(std::string &line, const std::pair<std::string,Information> &task,
+						    std::vector<std::string> &_info) const
+{
   std::regex r;
   std::smatch smatch;
 
   if (task.second == 2)
     r = "^([0-9]{1,3}.){3}.([0-9]{1,3})$";
-  if (task.second == 1)
+  else if (task.second == 1)
     r = "(\\w+)(\\.|_)?(\\w*)@(\\w+)(\\.(\\w+))+";
-  if (task.second == 0)
+  else if (task.second == 0)
     r = "(0|\\+33)[1-9]([ ]?[0-9]{2}){4}";
 
   while (std::regex_search(line, smatch, r))
@@ -65,7 +55,10 @@ void			ParserFile::stockMyInfo(std::string &line, std::pair<std::string, Informa
     }
 }
 
-void			ParserFile::parseFile(std::pair<std::string, Information > task, int posDep, int posFin){
+void			ParserFile::parseFile(const std::pair<std::string, Information > &task,
+						  const int posDep,
+						  const int posFin)
+{
   std::ifstream			myfile(task.first);
   std::string			line;
   int				count = 0;
