@@ -24,7 +24,7 @@ OBJS	= $(SRCS:.cpp=.o)
 
 CPPFLAGS += -W -Wall -Werror -Wextra -I./ -I../src/ -std=c++14
 
-LDFLAGS  = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+LDFLAGS  = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lpthread
 
 all: $(NAME)
 
