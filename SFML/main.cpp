@@ -15,7 +15,6 @@ int			usage(char *str)
 int 			main(int ac, char **av)
 {
   int 			nbrOfThreadPerProcess = 0;
-  Gui			gui;
 
   if (ac != 2)
     return (usage(av[0]));
