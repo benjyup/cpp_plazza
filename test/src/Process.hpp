@@ -37,6 +37,7 @@ namespace Pza
     static void			sonSigHandler(int);
     static void			sonSigHandler2(int);
     static void			cancelSIGUSER1(int);
+    static void			cancelSIGUSER2(int, siginfo_t *info, void*);
     //int getDispo() const;
    private:
 

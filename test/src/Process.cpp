@@ -15,12 +15,16 @@ Pza::Process::Process(int nbrOfThread) :
   _id(Pza::Process::ID),
   _socketName(Pza::Process::SOCKET_NAME + std::to_string(Pza::Process::ID++))
 {
-  if (signal(SIGUSR1, this->cancelSIGUSER1) == SIG_ERR || signal(SIGUSR2, this->cancelSIGUSER1) == SIG_ERR)
+  if (signal(SIGUSR1, this->cancelSIGUSER1) == SIG_ERR)
     throw Pza::PlazzaException("signal: " + std::string(strerror(errno)));
   if (_pid < 0)
     throw Pza::PlazzaException("fork: " + std::string(strerror(errno)));
   if (_pid != 0)
     {
+      struct sigaction act;
+      act.sa_sigaction = &Pza::Process::cancelSIGUSER2;
+      act.sa_flags = SA_SIGINFO;
+      sigaction(SIGUSR2, &act, NULL);
       pause();
       if (kill(this->_pid, SIGUSR1) == -1)
 	throw Pza::PlazzaException("kill: " + std::string(strerror(errno)));
@@ -61,9 +65,8 @@ void	chrono(std::chrono::time_point<std::chrono::system_clock> &start, std::mute
       }
     }
   std::cout << "SIGUSR2" << getpid() << " pid ; " << _pid << std::endl;
-  kill(getpid(), SIGUSR2);
+  kill(getppid(), SIGUSR2);
   std::cout << "SIGUSR2\n";
-  exit(1);
 }
 
 void					Pza::Process::AddTask(std::string const &filename,
@@ -126,8 +129,6 @@ void 					Pza::Process::son(void)
       }
       //close(clientSocket);
     }
-  std::cout << "go out\n";
-  this->~Process();
 }
 
 template<typename T>
@@ -147,13 +148,20 @@ void 					Pza::Process::sonSigHandler(int)
 void 					Pza::Process::sonSigHandler2(int)
 {
   std::cout << "Sighandler 2\n";
+  std::cout << getpid() << std::endl;
   Pza::Process::AFK = true;
   exit(1);
   // (void)remove(this->_socketName.c_str());
 }
 
-void					Pza::Process::cancelSIGUSER1(int)
+void					Pza::Process::cancelSIGUSER2(int, siginfo_t *info, void *context)
 {
   std::cout << "Cancel\n";
+  /* Cancel SIGUSER1 behavior (SIGINT) */
+}
+
+void					Pza::Process::cancelSIGUSER1(int)
+{
+  std::cout << "SigUSER1\n";
   /* Cancel SIGUSER1 behavior (SIGINT) */
 }
