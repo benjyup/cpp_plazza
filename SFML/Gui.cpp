@@ -19,7 +19,7 @@
 #include "Plazza.hpp"
 
 Gui::Gui() : _window(sf::VideoMode(1600, 848,32), "Plazza", sf::Style::Default), _strMail("  Email\nAddress"), _strPhone(" Phone\nNumber"), _strIP("     IP\nAddress"),
-	     _info(0), _index(0), _indexLeft(1), _indexRight(1), _textf(false)
+	     _info(0), _index(0), _indexLeft(1), _textf(false)
 {
   sf::Font myfont;
   if(!myfont.loadFromFile("fonts/contb.ttf"))
