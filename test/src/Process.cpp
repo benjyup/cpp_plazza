@@ -22,8 +22,11 @@ Pza::Process::Process(int nbrOfThread) :
   if (_pid != 0)
     {
       struct sigaction act;
+      act.sa_handler = &Pza::Process::cancelSIGUSER1;
       act.sa_sigaction = &Pza::Process::cancelSIGUSER2;
-      act.sa_flags = SA_SIGINFO;
+      sigemptyset(&act.sa_mask);
+      sigaddset(&act.sa_mask, SIGUSR2);
+      act.sa_flags = 0;
       sigaction(SIGUSR2, &act, NULL);
       pause();
       if (kill(this->_pid, SIGUSR1) == -1)
@@ -56,7 +59,7 @@ void	chrono(std::chrono::time_point<std::chrono::system_clock> &start, std::mute
 {
   int elapsed_seconds = 0;
 
-  while (elapsed_seconds < 5)
+  while (elapsed_seconds < 1)
     {
       {
       	std::unique_lock<std::mutex> lock(mutex);
