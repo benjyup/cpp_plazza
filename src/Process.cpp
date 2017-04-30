@@ -10,12 +10,12 @@ bool 					Pza::Process::FATHER_IS_OK = false;
 bool 					Pza::Process::AFK = false;
 
 Pza::Process::Process(int nbrOfThread) :
-	_nbrOfThread(nbrOfThread),
-	_pid(fork()),
-	_id(Pza::Process::ID),
-	_socketName(Pza::Process::SOCKET_NAME + std::to_string(Pza::Process::ID++))
+  _nbrOfThread(nbrOfThread),
+  _pid(fork()),
+  _id(Pza::Process::ID),
+  _socketName(Pza::Process::SOCKET_NAME + std::to_string(Pza::Process::ID++))
 {
-  if (signal(SIGUSR1, this->cancelSIGUSER1) == SIG_ERR)
+  if (signal(SIGUSR1, this->cancelSIGUSER1) == SIG_ERR || signal(SIGUSR2, this->cancelSIGUSER1) == SIG_ERR)
     throw Pza::PlazzaException("signal: " + std::string(strerror(errno)));
   if (_pid < 0)
     throw Pza::PlazzaException("fork: " + std::string(strerror(errno)));
@@ -44,23 +44,25 @@ Pza::Process::~Process(void)
 {
   std::cout << "Pid = " << getpid() << " | [" << _id << "]" << "~Process" << std::endl;
   std::cout << getpid() << " " << _pid << std::endl;
-  kill(this->_pid, SIGINT);
+  kill(getpid(), SIGINT);
   (void)remove(this->_socketName.c_str());
 }
 
-void	chrono(Pza::Process &process)
+void	chrono(std::chrono::time_point<std::chrono::system_clock> &start, std::mutex &mutex, int _pid)
 {
   int elapsed_seconds = 0;
 
-  while (elapsed_seconds < 5)
+  while (elapsed_seconds < 1)
     {
       {
-      	std::unique_lock<std::mutex> lock(process.getMutex());
+      	std::unique_lock<std::mutex> lock(mutex);
       	elapsed_seconds = std::chrono::duration_cast<std::chrono::seconds>
-      	  (std::chrono::system_clock::now() - process.getTime()).count();
+      	  (std::chrono::system_clock::now() - start).count();
       }
     }
+  std::cout << "SIGUSR2" << getpid() << " pid ; " << _pid << std::endl;
   kill(getpid(), SIGUSR2);
+  std::cout << "SIGUSR2\n";
 }
 
 void					Pza::Process::AddTask(std::string const &filename,
@@ -95,7 +97,7 @@ void 					Pza::Process::son(void)
     }
   //std::cout << "Process créé" << std::endl;
   _start = std::chrono::system_clock::now();
-  std::thread(chrono, std::ref(*this));
+  std::thread th = std::thread(chrono, std::ref(this->_start), std::ref(this->_timeMutex), this->_pid);
   while (!this->AFK)
     {
       try
@@ -123,6 +125,8 @@ void 					Pza::Process::son(void)
       }
       //close(clientSocket);
     }
+  std::cout << "go out\n";
+  this->~Process();
 }
 
 template<typename T>
@@ -141,11 +145,14 @@ void 					Pza::Process::sonSigHandler(int)
 
 void 					Pza::Process::sonSigHandler2(int)
 {
-  std::cout << "Sig Handler 2\n";
+  std::cout << "Sighandler 2\n";
   Pza::Process::AFK = true;
+  exit(1);
+  // (void)remove(this->_socketName.c_str());
 }
 
 void					Pza::Process::cancelSIGUSER1(int)
 {
+  std::cout << "Cancel\n";
   /* Cancel SIGUSER1 behavior (SIGINT) */
 }
