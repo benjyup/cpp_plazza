@@ -39,6 +39,8 @@ Gui::Gui() : _window(sf::VideoMode(1600, 848,32), "Plazza", sf::Style::Default),
 
 Gui::~Gui()
 {
+  _pageInfo.clear();
+  _window.close();
 }
 
 void	Gui::initButtons()
@@ -311,5 +313,4 @@ void	Gui::refresh(Pza::Plazza &plazza)
 	  cl = 0;
 	}
     }
-  _window.close();
 }
