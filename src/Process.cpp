@@ -7,6 +7,7 @@
 unsigned int				Pza::Process::ID = 0;
 std::string				Pza::Process::SOCKET_NAME = "./.processSocket";
 bool 					Pza::Process::FATHER_IS_OK = false;
+bool 					Pza::Process::AFK = false;
 
 Pza::Process::Process(int nbrOfThread) :
 	_nbrOfThread(nbrOfThread),
@@ -36,12 +37,30 @@ Pza::Process::Process(const Pza::Process &other) :
 
 }
 
+std::mutex	&Pza::Process::getMutex(void) { return (_timeMutex); }
+std::chrono::time_point<std::chrono::system_clock> &Pza::Process::getTime(void) { return (_start); }
+
 Pza::Process::~Process(void)
 {
-  /*std::cout << "Pid = " << getpid() << " | [" << _id << "]" << "~Process" << std::endl;
-    std::cout << getpid() << " " << _pid << std::endl; */
+  std::cout << "Pid = " << getpid() << " | [" << _id << "]" << "~Process" << std::endl;
+  std::cout << getpid() << " " << _pid << std::endl;
   kill(this->_pid, SIGINT);
   (void)remove(this->_socketName.c_str());
+}
+
+void	chrono(Pza::Process &process)
+{
+  int elapsed_seconds = 0;
+
+  while (elapsed_seconds < 5)
+    {
+      {
+      	std::unique_lock<std::mutex> lock(process.getMutex());
+      	elapsed_seconds = std::chrono::duration_cast<std::chrono::seconds>
+      	  (std::chrono::system_clock::now() - process.getTime()).count();
+      }
+    }
+  kill(getpid(), SIGUSR2);
 }
 
 void					Pza::Process::AddTask(std::string const &filename,
@@ -67,7 +86,7 @@ void 					Pza::Process::son(void)
   int 					clientSocket;
   unsigned long				size;
 
-  if (signal(SIGUSR1, this->sonSigHandler) == SIG_ERR)
+  if (signal(SIGUSR1, this->sonSigHandler) == SIG_ERR || signal(SIGUSR2, this->sonSigHandler2) == SIG_ERR)
     throw Pza::PlazzaException("signal: " + std::string(strerror(errno)));
   while (!(this->FATHER_IS_OK))
     {
@@ -75,7 +94,9 @@ void 					Pza::Process::son(void)
 	throw Pza::PlazzaException("kil: " + std::string(strerror(errno)));
     }
   //std::cout << "Process créé" << std::endl;
-  while (true)
+  _start = std::chrono::system_clock::now();
+  std::thread(chrono, std::ref(*this));
+  while (!this->AFK)
     {
       try
 	{
@@ -93,9 +114,13 @@ void 					Pza::Process::son(void)
 	  //std::cout << "Process[" << this->_id << "] J'ai reçu cette commande: " << order<< std::endl;
 
 	  threadPool.addTask(order.substr(0, size), TO_INFORMATION.at( this->toNumber<int>(std::string(1, order[size]))));
+	  {
+	    std::unique_lock<std::mutex> lock(_timeMutex);
+	    _start = std::chrono::system_clock::now();
+	  }
 	} catch (const std::exception &e) {
-	  std::cerr << "Process[" << _id << "] error: " << e.what() << std::endl;
-	}
+	std::cerr << "Process[" << _id << "] error: " << e.what() << std::endl;
+      }
       //close(clientSocket);
     }
 }
@@ -112,6 +137,12 @@ T Pza::Process::toNumber(const std::string &str)
 void 					Pza::Process::sonSigHandler(int)
 {
   Pza::Process::FATHER_IS_OK = true;
+}
+
+void 					Pza::Process::sonSigHandler2(int)
+{
+  std::cout << "Sig Handler 2\n";
+  Pza::Process::AFK = true;
 }
 
 void					Pza::Process::cancelSIGUSER1(int)
