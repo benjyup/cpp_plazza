@@ -22,7 +22,7 @@ ParserFile::~ParserFile()
 {
 }
 
-bool			ParserFile::infoValid(std::string str, int info)
+bool			ParserFile::infoValid(std::string str, Information info)
 {
   if (info == 0)
     {
@@ -44,7 +44,7 @@ bool			ParserFile::infoValid(std::string str, int info)
       }
 }
 
-void			ParserFile::stockMyInfo(std::string &line, std::pair<std::string, int> task,
+void			ParserFile::stockMyInfo(std::string &line, std::pair<std::string, Information > task,
 						    std::vector<std::string> &_info) {
   std::regex r;
   std::smatch smatch;
@@ -54,18 +54,18 @@ void			ParserFile::stockMyInfo(std::string &line, std::pair<std::string, int> ta
   if (task.second == 1)
     r = "(\\w+)(\\.|_)?(\\w*)@(\\w+)(\\.(\\w+))+";
   if (task.second == 0)
-    r = "(0|\\+33)[1-9]([-. ]?[0-9]{2}){4}";
+    r = "(0|\\+33)[1-9]([ ]?[0-9]{2}){4}";
 
   while (std::regex_search(line, smatch, r))
     {
       for (auto x:smatch)
-	if (infoValid(x, task.second) == true)
+	if (infoValid(x, task.second))
 	  _info.push_back(x);
       line = smatch.suffix().str();
     }
 }
 
-void			ParserFile::parseFile(std::pair<std::string, int> task, int posDep, int posFin){
+void			ParserFile::parseFile(std::pair<std::string, Information > task, int posDep, int posFin){
   std::ifstream			myfile(task.first);
   std::string			line;
   int				count = 0;
