@@ -33,7 +33,36 @@ Gui::Gui() : _window(sf::VideoMode(1600, 848,32), "Plazza", sf::Style::Default),
   initText(_text, _textSh, 0, 494, "", 16);
   initText(_textFull, _textFullSh, 10, 520, "You don\'t have enough space...\n Press BackSpace to erase all.", 16);
   initText(_textPrompt, _textShPrompt, 0, 494, "|", 16);
-  initText(_infoGet, _infoShGet, 0, 35, "" , 12);
+  initText(_infoGet, _infoShGet, 0, 35, "1\n"
+	  "2\n"
+	  "3\n"
+	  "0123456789 0123456790\n"
+	  "5\n"
+	  "6\n"
+	  "7\n"
+	  "8\n"
+	  "benjamin.peixoto@epitech.eu vincent.mesquita@epitech.eu\n"
+	  "10\n"
+	  "11\n"
+	  "255.255.255.255\n"
+	  "255.255.255.255\n"
+	  "255.255.255.255\n"
+	  "255.255.255.255\n"
+	  "255.255.255.255\n"
+	  "255.255.255.255\n"
+	  "255.255.255.255\n"
+	  "255.255.255.255\n"
+	  "255.255.255.255\n"
+	  "255.255.255.255\n"
+	  "255.255.255.255\n"
+	  "255.255.255.255\n"
+	  "255.255.255.255\n"
+	  "255.255.255.255\n"
+	  "255.255.255.255\n"
+	  "255.255.255.255\n"
+	  "255.255.255.255\n"
+	  "1.1.1.1\n"
+	  "100.100.100.100" , 12);
 }
 
 Gui::~Gui()
@@ -196,7 +225,7 @@ void	Gui::affResult(Pza::Plazza &plazza)
     _pageInfo.push_back(*it);
   for (auto it = plazza.getRes().begin(); it != plazza.getRes().end(); ++it)
     {
-      if (i == 27)
+      if (_infoGet.getLocalBounds().height > 100)
 	{
 	  _infoGet.setString(fileInfo);
 	  _infoShGet.setString(fileInfo);
@@ -277,8 +306,6 @@ void	Gui::refresh(Pza::Plazza &plazza)
 		{
 		  sendCommand(plazza);
 		  affResult(plazza);
-		  //for (auto i = _pageInfo.begin(); i != _pageInfo.end(); ++i)
-		  //std::cout << *i << std::endl;
 		}
 	      if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 		{
