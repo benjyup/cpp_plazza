@@ -67,6 +67,9 @@ void			ParserFile::parseFile(const std::pair<std::string, Information > &task,
   if(!myfile.is_open())
     {
       std::cout << "Error: \"" << task.first << "\" doesn't exist." << std::endl;
+      std::unique_lock<std::mutex>	lock(this->_sendMutex);
+      Pza::UnixSocket::Client	client(Pza::Plazza::SOCKET_NAME);
+      client.send(line);
       return ;
     }
   if (posDep != -1 && posFin != -1)
