@@ -6,7 +6,7 @@
 #include "Plazza.hpp"
 
 
-int			usage(char *str)
+int			usage(const char *str)
 {
   std::cerr << "Usage : " << str << " NbrOfThreadPerProcess" << std::endl;
   return (EXIT_FAILURE);
