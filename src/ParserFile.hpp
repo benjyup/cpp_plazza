@@ -16,7 +16,7 @@ class ParserFile
   ParserFile();
   ~ParserFile();
 
-  bool			infoValid(std::string str, Information info);
+  bool			infoValid(const std::string &str, Information info);
   void			stockMyInfo(std::string &line, std::pair<std::string, Information > task,
 					  std::vector<std::string> &);
   void			parseFile(std::pair<std::string, Information > task, int posDep, int posFin);

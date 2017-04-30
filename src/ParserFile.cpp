@@ -22,7 +22,7 @@ ParserFile::~ParserFile()
 {
 }
 
-bool			ParserFile::infoValid(std::string str, Information info)
+bool			ParserFile::infoValid(const std::string &str, Information info)
 {
   if (info == 0)
     {
