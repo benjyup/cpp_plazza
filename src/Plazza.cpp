@@ -63,12 +63,7 @@ Pza::Plazza::Plazza(int nbrOfThreadPerProcess) :
   _stopServer(false),
   _activeThread(0),
   _threadServer(server, this, &_stopServer, &_activeThread)
-{
-/*
-  if (_nbrOfThreadPerProcess <= 0 || _nbrOfThreadPerProcess > 10)
-    throw Pza::PlazzaException("The number of thread per process must be between 1 and 10");
-*/
-}
+{ }
 
 Pza::Plazza::~Plazza()
 {
