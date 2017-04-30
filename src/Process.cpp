@@ -38,8 +38,6 @@ Pza::Process::Process(const Pza::Process &other) :
 
 Pza::Process::~Process(void)
 {
-  /*std::cout << "Pid = " << getpid() << " | [" << _id << "]" << "~Process" << std::endl;
-    std::cout << getpid() << " " << _pid << std::endl; */
   kill(this->_pid, SIGINT);
   (void)remove(this->_socketName.c_str());
 }
@@ -48,15 +46,8 @@ void					Pza::Process::AddTask(std::string const &filename,
 								  const Information &info)
 {
   try {
-      //std::cout << "adding task | " << _socketName << std::endl;
       UnixSocket::Client		client(this->_socketName);
-/*
-      client.send(std::to_string(filename.size()));
-      client.getNotification(2);
-*/
-      //std::cout << "Notification = " << client.getNotification(2) << std::endl;
       client.send(filename + std::to_string(info));
-      //client.getNotification(2);
     } catch (const std::exception &e) {
       std::cerr << "WArning: Not able to send task: " << e.what() << std::endl;
     }
@@ -67,7 +58,6 @@ void 					Pza::Process::son(void)
   Pza::ThreadPool			threadPool(this->_nbrOfThread);
   UnixSocket::Server			_server(this->_socketName, this->_nbrOfThread);
   int 					clientSocket;
-  unsigned long				size;
 
   if (signal(SIGUSR1, this->sonSigHandler) == SIG_ERR)
     throw Pza::PlazzaException("signal: " + std::string(strerror(errno)));
@@ -76,30 +66,17 @@ void 					Pza::Process::son(void)
       if (kill(getppid(), SIGUSR1) == -1)
 	throw Pza::PlazzaException("kil: " + std::string(strerror(errno)));
     }
-  //std::cout << "Process créé" << std::endl;
   while (true)
     {
       try
 	{
 	  clientSocket = _server.getClientConection();
-	  //std::cout << "client connecté" << std::endl;
-
-	  //std::string order(_server.recept(clientSocket, 5));
-	  //std::cout << "Process[" << this->_id << "] J'ai reçu cette commande: " << order << std::endl;
-	  //_server.notify("OK");
-
-	  size = 4096;
-
-	  std::string order = (_server.recept(clientSocket, size));
-	  //_server.notify("OK");
-	  //std::cout << "Process[" << this->_id << "] J'ai reçu cette commande: " << order<< std::endl;
-
+	  std::string order = (_server.recept(clientSocket, 4096));
 	  threadPool.addTask(order.substr(0, order.size() - 1),
 			     TO_INFORMATION.at( this->toNumber<int>(std::string(1, order[order.size() - 1]))));
 	} catch (const std::exception &e) {
 	  std::cerr << "Process[" << _id << "] error: " << e.what() << std::endl;
 	}
-      //close(clientSocket);
     }
 }
 

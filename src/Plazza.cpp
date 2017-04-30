@@ -89,7 +89,6 @@ void						Pza::Plazza::processHandler(std::vector<std::pair<std::vector<
   while (std::ceil((double)nbTask / (2 * _nbrOfThreadPerProcess)) > _processes.size() || _processes.size() == 0)
     {
       this->_processes.emplace_back(_nbrOfThreadPerProcess);
-      std::cout << "Fork\n";
     }
   for (const auto &it : orders)
     {
@@ -124,7 +123,7 @@ void						Pza::Plazza::loop(std::string & line, Pza::OrderParser &parser)
 	  parser.parse(orders);
 	} catch (const std::exception &e)
 	{
-	  std::cerr << "Error: " << e.what() << std::endl;
+	  //std::cerr << "Error: " << e.what() << std::endl;
 	  return ;
 	}
       processHandler(orders);

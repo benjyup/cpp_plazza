@@ -38,9 +38,6 @@ namespace Pza
 
     void addTask(std::string const &, Information const &);
     bool getStatus() const;
-    int  getDispo() const;
-    void inc();
-    void dec();
 
     std::pair<std::string, Information>		&getTask(void);
     std::mutex					&getMutex(void);
@@ -56,7 +53,6 @@ namespace Pza
     std::mutex _mutexQ;
     std::deque<std::thread> _workers;
     bool _stop;
-    int			     _dispo;
   };
 }
 

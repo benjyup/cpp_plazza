@@ -25,10 +25,10 @@ void		threadloop(Pza::ThreadPool *t)
 }
 
 Pza::ThreadPool::ThreadPool(const unsigned int nb)
-	:   _stop(false), _dispo(_workers.size())
+	:   _stop(false)
 {
   for(unsigned int i = 0; i < nb; ++i)
-    _workers.emplace_back(std::thread(threadloop, this)); //check
+    _workers.emplace_back(std::thread(threadloop, this));
 }
 
 Pza::ThreadPool::~ThreadPool()
@@ -76,19 +76,4 @@ void Pza::ThreadPool::wait(std::unique_lock<std::mutex> &lock)
 std::mutex &Pza::ThreadPool::getMutex(void)
 {
   return (this->_mutexQ);
-}
-
-int Pza::ThreadPool::getDispo() const
-{
-  return _dispo;
-}
-
-void Pza::ThreadPool::inc()
-{
-  _dispo++;
-}
-
-void Pza::ThreadPool::dec()
-{
-  _dispo--;
 }
